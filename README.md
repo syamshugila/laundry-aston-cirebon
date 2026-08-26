@@ -2,7 +2,9 @@
 
 Sistem pelacakan laundry tamu Hotel Aston Cirebon — dari kamar, ke laundry atau vendor, sampai kembali ke kamar. Lengkap dengan bukti foto, hitung ganda, tanda tangan, dan verifikasi HK Leader.
 
-**Teknologi:** Next.js 15 + Tailwind CSS · Firebase Authentication (Login Google) · Firestore · Google Drive (foto) · deploy di Vercel.
+**Teknologi:** Next.js 16 + Tailwind CSS · Firebase Authentication (Login Google) · Firestore · Google Drive (foto) · deploy di Vercel.
+
+> **Catatan keamanan:** aplikasi ini memakai Next.js versi terbaru (16.x) dan sudah bebas dari peringatan keamanan (`npm audit` = 0 kerentanan). Vercel akan **menolak deploy** kalau versi Next.js-nya lama dan punya celah keamanan. Kalau suatu saat muncul pesan *"Vulnerable version of Next.js detected"*, lihat [bagian 12](#12-kalau-vercel-menolak-karena-versi-nextjs) di bawah.
 
 ---
 
@@ -19,6 +21,7 @@ Sistem pelacakan laundry tamu Hotel Aston Cirebon — dari kamar, ke laundry ata
 9. [Pemakaian pertama kali](#9-pemakaian-pertama-kali)
 10. [Cara update aplikasi nanti](#10-cara-update-aplikasi-nanti)
 11. [Kalau ada masalah](#11-kalau-ada-masalah)
+12. [Kalau Vercel menolak karena versi Next.js](#12-kalau-vercel-menolak-karena-versi-nextjs)
 
 ---
 
@@ -371,6 +374,64 @@ git push
 | Foto gagal diunggah | Apps Script belum di-deploy ulang setelah diubah | Deploy → Manage deployments → pensil → New version → Deploy |
 | Data tidak muncul padahal sudah disimpan | Sinyal internet putus | Data tersimpan di HP dan terkirim otomatis saat sinyal kembali — lihat lencana "Luring" di bagian atas |
 | Nota tidak bisa diverifikasi | Masih ada kendala terbuka | Selesaikan dulu di menu **Kendala & Klaim** |
+
+---
+
+## 12. Kalau Vercel menolak karena versi Next.js
+
+Kalau di halaman Deployment muncul kotak merah:
+
+> **Build Failed** — Vulnerable version of Next.js detected, please update immediately.
+
+Artinya versi Next.js yang dipakai punya celah keamanan yang sudah ditambal di versi lebih baru. **Jangan klik tombol "Upgrade"** di layar Vercel — itu menawarkan paket berbayar, bukan memperbaiki masalahnya. Perbaikannya dilakukan dari komputer Anda sendiri, gratis.
+
+Buka Terminal di dalam folder aplikasi, jalankan **satu per satu**:
+
+```bash
+npm install next@latest react@latest react-dom@latest
+```
+
+```bash
+npm install -D postcss@latest autoprefixer@latest @types/react@latest @types/react-dom@latest
+```
+
+Periksa sudah bersih atau belum:
+
+```bash
+npm audit
+```
+
+Kalau muncul tulisan `found 0 vulnerabilities`, berarti sudah aman. Lalu pastikan aplikasinya masih bisa dibangun:
+
+```bash
+npm run build
+```
+
+Kalau muncul tanda ✓ dan daftar halaman, berarti berhasil. Terakhir, kirim perubahannya:
+
+```bash
+git add .
+```
+
+```bash
+git commit -m "Update Next.js ke versi terbaru untuk perbaikan keamanan"
+```
+
+```bash
+git push
+```
+
+Vercel akan otomatis mencoba deploy ulang. Tunggu ±1–2 menit.
+
+> **Penting:** file `package-lock.json` **harus ikut** ter-commit. File itu yang memberi tahu Vercel versi persis setiap paket. Perintah `git add .` sudah menyertakannya secara otomatis.
+
+Kalau `npm run build` gagal setelah update (kadang versi baru mengubah aturan), kembalikan dulu ke versi sebelumnya sambil mencari tahu:
+
+```bash
+npm install next@15.5.24
+```
+
+Versi `15.5.24` adalah versi lama yang tetap mendapat tambalan keamanan, jadi Vercel juga menerimanya.
 
 ---
 
