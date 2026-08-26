@@ -1,0 +1,25 @@
+# ==== RAHASIA — JANGAN PERNAH DI-UPLOAD ====
+.env
+.env.local
+.env*.local
+service-account.json
+*.key
+*.pem
+
+# ==== dependensi & hasil build ====
+node_modules
+/.next
+/out
+/build
+/dist
+.vercel
+*.tsbuildinfo
+next-env.d.ts
+
+# ==== sistem & editor ====
+.DS_Store
+Thumbs.db
+.vscode
+.idea
+*.log
+npm-debug.log*

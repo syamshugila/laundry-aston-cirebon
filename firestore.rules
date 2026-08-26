@@ -1,0 +1,124 @@
+rules_version = '2';
+
+// =====================================================================
+// FIRESTORE SECURITY RULES — VERITAS Guest Laundry, Hotel Aston Cirebon
+//
+// Ini adalah keamanan yang sesungguhnya. Menyembunyikan tombol di layar
+// BUKAN keamanan; aturan di file inilah yang tidak bisa ditembus.
+//
+// Cara pasang:  Firebase Console → Firestore Database → Rules →
+//               hapus isi lama, tempel semua isi file ini → Publish.
+// =====================================================================
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // ---------- fungsi bantu ----------
+    function masuk() {
+      return request.auth != null;
+    }
+
+    function emailSaya() {
+      return request.auth.token.email.lower();
+    }
+
+    // GANTI daftar email di bawah bila Super Admin bertambah.
+    function superAdmin() {
+      return masuk() && emailSaya() in [
+        'syam.rakhmany@gmail.com'
+      ];
+    }
+
+    function profil() {
+      return get(/databases/$(database)/documents/users/$(request.auth.uid)).data;
+    }
+
+    function punyaPeran(daftar) {
+      return masuk() && (
+        superAdmin() ||
+        (
+          exists(/databases/$(database)/documents/users/$(request.auth.uid)) &&
+          profil().active == true &&
+          profil().role in daftar
+        )
+      );
+    }
+
+    function stafAktif() {
+      return punyaPeran(['valet', 'attendant', 'hk_supervisor', 'hk_leader', 'front_office']);
+    }
+
+    function leader() {
+      return punyaPeran(['hk_leader']);
+    }
+
+    // ---------- pengguna ----------
+    match /users/{uid} {
+      // Setiap orang boleh membaca & membuat profilnya sendiri saat login pertama,
+      // TAPI hanya boleh mendaftar dengan peran "pending" (bukan langsung admin).
+      allow read: if masuk() && (request.auth.uid == uid || stafAktif() || superAdmin());
+      allow create: if masuk() && request.auth.uid == uid
+                    && request.resource.data.role in ['pending', 'super_admin']
+                    && (request.resource.data.role != 'super_admin' || superAdmin());
+      // Perubahan peran hanya oleh Super Admin.
+      allow update: if superAdmin()
+                    || (masuk() && request.auth.uid == uid
+                        && request.resource.data.role == resource.data.role
+                        && request.resource.data.active == resource.data.active);
+      allow delete: if superAdmin();
+    }
+
+    // ---------- nota laundry ----------
+    match /laundry_orders/{orderId} {
+      allow read: if stafAktif();
+      allow create: if punyaPeran(['valet', 'hk_supervisor', 'hk_leader', 'front_office']);
+
+      // Nota yang sudah terkunci tidak boleh diubah siapa pun kecuali Super Admin.
+      allow update: if stafAktif()
+                    && (resource.data.isLocked != true || superAdmin())
+                    // hanya HK Leader / Super Admin yang boleh mengunci
+                    && (request.resource.data.isLocked != true || leader() || superAdmin());
+
+      allow delete: if superAdmin();
+    }
+
+    // ---------- kendala ----------
+    match /laundry_issues/{issueId} {
+      allow read: if stafAktif();
+      allow create: if stafAktif();
+      allow update: if punyaPeran(['hk_leader', 'hk_supervisor']);
+      allow delete: if superAdmin();
+    }
+
+    // ---------- master data ----------
+    match /price_list/{itemId} {
+      allow read: if stafAktif();
+      allow write: if superAdmin();
+    }
+
+    match /vendors/{vendorId} {
+      allow read: if stafAktif();
+      allow write: if superAdmin();
+    }
+
+    match /app_settings/{docId} {
+      allow read: if stafAktif();
+      allow write: if superAdmin();
+    }
+
+    // ---------- penomoran & statistik ----------
+    match /counters/{docId} {
+      allow read, write: if stafAktif();
+    }
+
+    match /daily_stats/{docId} {
+      allow read: if stafAktif();
+      allow write: if stafAktif();
+    }
+
+    // ---------- tutup semua yang tidak disebut di atas ----------
+    match /{document=**} {
+      allow read, write: if false;
+    }
+  }
+}
