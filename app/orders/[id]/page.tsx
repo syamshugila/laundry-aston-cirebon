@@ -143,7 +143,7 @@ export default function OrderDetail() {
                     <tr key={i} className="border-b border-line last:border-0">
                       <td className="td">
                         <span className="font-semibold text-ink">{it.itemName}</span>
-                        {it.note && <div className="text-[12.5px] text-amber-700">{it.note}</div>}
+                        {it.note && <div className="text-[12.5px] text-gold-700">{it.note}</div>}
                       </td>
                       <td className="td">{TREATMENT_LABEL[it.treatment]}</td>
                       <td className="td">{it.route === "vendor" ? "Vendor" : "In-house"}</td>

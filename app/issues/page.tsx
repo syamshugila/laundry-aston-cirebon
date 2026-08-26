@@ -4,7 +4,7 @@ import Link from "next/link";
 import { useIssues } from "@/lib/hooks";
 import { useAuth } from "@/lib/auth-context";
 import { selesaikanKendala } from "@/lib/data";
-import { PageHeader, Spinner, EmptyState, Notice, StatCard, Field } from "@/components/ui";
+import { PageHeader, EmptyState, Notice, StatCard, Field, SkeletonList } from "@/components/ui";
 import Icon from "@/components/Icon";
 import { rupiah, tanggalJam } from "@/lib/format";
 import { canVerify } from "@/lib/status";
@@ -52,7 +52,7 @@ export default function IssuesPage() {
         </div>
       )}
 
-      <div className="mb-5 grid grid-cols-2 gap-3 sm:grid-cols-4">
+      <div className="stagger mb-5 grid grid-cols-2 gap-3 sm:grid-cols-4">
         <StatCard label="Kendala Terbuka" value={terbuka.length} tone={terbuka.length ? "danger" : "ok"} hint="Perlu ditindak" />
         <StatCard label="Sudah Selesai" value={selesai.length} tone="ok" hint="Ada penutupnya" />
         <StatCard label="Nilai Kerugian" value={rupiah(totalRugi)} hint="Dari kendala terbuka" />
@@ -79,7 +79,7 @@ export default function IssuesPage() {
       </div>
 
       {loading ? (
-        <Spinner />
+        <SkeletonList rows={5} />
       ) : rows.length === 0 ? (
         <EmptyState
           icon="check"
@@ -91,7 +91,7 @@ export default function IssuesPage() {
           }
         />
       ) : (
-        <div className="space-y-3">
+        <div className="stagger space-y-3">
           {rows.map((k) => (
             <KartuKendala key={k.id} k={k} bolehTutup={canVerify(role)} />
           ))}
@@ -126,10 +126,10 @@ function KartuKendala({ k, bolehTutup }: { k: LaundryIssue; bolehTutup: boolean 
   }
 
   const warna =
-    k.status === "resolved" ? "" : k.type === "lost" || k.type === "damaged" ? "border-l-[3px] border-l-rose-500" : "border-l-[3px] border-l-amber-500";
+    k.status === "resolved" ? "" : k.type === "lost" || k.type === "damaged" ? "border-l-[3px] border-l-rose-500" : "border-l-[3px] border-l-gold-500";
 
   return (
-    <div className={`card px-5 py-4 ${warna}`}>
+    <div className={`card card-hover px-5 py-4 ${warna}`}>
       <div className="flex flex-wrap items-start justify-between gap-3">
         <div className="min-w-0">
           <div className="flex flex-wrap items-center gap-2">

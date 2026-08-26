@@ -342,9 +342,9 @@ function TabVendor() {
       ) : rows.length === 0 ? (
         <EmptyState icon="truck" title="Belum ada vendor terdaftar" desc="Tambahkan vendor rekanan supaya serah terima bisa dicatat lengkap dengan surat jalan." />
       ) : (
-        <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+        <div className="stagger grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
           {rows.map((v) => (
-            <div key={v.id} className="card px-5 py-4">
+            <div key={v.id} className="card card-hover px-5 py-4">
               <div className="flex items-start justify-between gap-2">
                 <div>
                   <p className="text-[15.5px] font-bold text-ink">{v.name}</p>

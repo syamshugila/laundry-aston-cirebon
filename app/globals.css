@@ -2,45 +2,64 @@
 @tailwind components;
 @tailwind utilities;
 
-:root {
-  --sidebar-w: 250px;
-}
-
 html,
 body {
-  background: #edf1f4;
-  color: #16212c;
+  background: #eff2f7;
+  color: #101a2e;
   -webkit-font-smoothing: antialiased;
 }
 
+/* Warna sorotan teks mengikuti aksen emas Aston */
+::selection {
+  background: #f0d5a9;
+  color: #101a2e;
+}
+
 @layer components {
+  /* ---------------- dasar ---------------- */
   .card {
     @apply rounded-xl border border-line bg-white shadow-card;
   }
+  .card-hover {
+    @apply transition duration-200 hover:-translate-y-0.5 hover:border-brand-200 hover:shadow-lift;
+  }
+
   .label {
     @apply mb-1.5 block text-[11px] font-semibold uppercase tracking-[0.09em] text-ink-3;
   }
+
   .input {
     @apply w-full rounded-lg border border-line bg-white px-3 py-2.5 text-[15px] text-ink outline-none
-           transition placeholder:text-ink-3/70 focus:border-brand-500 focus:ring-2 focus:ring-brand-100;
+           transition duration-150 placeholder:text-ink-3/70
+           hover:border-brand-200 focus:border-brand-500 focus:ring-4 focus:ring-brand-100;
   }
+
+  /* ---------------- tombol ---------------- */
   .btn {
     @apply inline-flex items-center justify-center gap-2 rounded-lg px-4 py-2.5 text-sm font-semibold
-           transition active:scale-[0.99] disabled:cursor-not-allowed disabled:opacity-50;
+           transition duration-150 active:scale-[0.98]
+           disabled:cursor-not-allowed disabled:opacity-50 disabled:active:scale-100;
   }
   .btn-primary {
-    @apply btn bg-brand-700 text-white hover:bg-brand-800;
+    @apply btn bg-brand-700 text-white shadow-sm hover:bg-brand-600 hover:shadow-navy;
+  }
+  .btn-gold {
+    @apply btn bg-gold-500 text-brand-900 shadow-sm hover:bg-gold-400 hover:shadow-gold;
   }
   .btn-ghost {
-    @apply btn border border-line bg-white text-ink hover:bg-slate-50;
+    @apply btn border border-line bg-white text-ink hover:border-brand-200 hover:bg-brand-50/60;
   }
   .btn-danger {
     @apply btn bg-rose-600 text-white hover:bg-rose-700;
   }
+
+  /* ---------------- pil status ---------------- */
   .pill {
     @apply inline-flex items-center rounded-md px-2 py-0.5 text-[11px] font-semibold uppercase
            tracking-[0.06em] ring-1 ring-inset;
   }
+
+  /* ---------------- tabel ---------------- */
   .th {
     @apply whitespace-nowrap px-4 py-3 text-left text-[11px] font-semibold uppercase tracking-[0.09em] text-ink-3;
   }
@@ -50,18 +69,59 @@ body {
   .num {
     @apply tabular-nums;
   }
+
+  /* ---------------- efek muat ---------------- */
+  .skeleton {
+    @apply rounded-md bg-slate-200/70;
+    background-image: linear-gradient(90deg, rgba(255, 255, 255, 0) 0%, rgba(255, 255, 255, 0.75) 50%, rgba(255, 255, 255, 0) 100%);
+    background-size: 480px 100%;
+    background-repeat: no-repeat;
+    @apply animate-shimmer;
+  }
 }
 
-/* Scrollbar halus untuk tabel lebar */
-.scroll-x {
-  overflow-x: auto;
+@layer utilities {
+  /* Masuk bertahap: anak-anak elemen muncul berurutan, bukan sekaligus */
+  .stagger > * {
+    @apply animate-fadeUp;
+  }
+  .stagger > *:nth-child(1) { animation-delay: 0ms; }
+  .stagger > *:nth-child(2) { animation-delay: 40ms; }
+  .stagger > *:nth-child(3) { animation-delay: 80ms; }
+  .stagger > *:nth-child(4) { animation-delay: 120ms; }
+  .stagger > *:nth-child(5) { animation-delay: 160ms; }
+  .stagger > *:nth-child(6) { animation-delay: 200ms; }
+  .stagger > *:nth-child(7) { animation-delay: 240ms; }
+  .stagger > *:nth-child(8) { animation-delay: 280ms; }
+  .stagger > *:nth-child(9) { animation-delay: 320ms; }
+  .stagger > *:nth-child(10) { animation-delay: 360ms; }
+  .stagger > *:nth-child(11) { animation-delay: 400ms; }
+  .stagger > *:nth-child(12) { animation-delay: 440ms; }
+
+  .gold-rule {
+    @apply h-[3px] w-14 rounded-full bg-gold-line;
+  }
+
+  .scroll-x {
+    overflow-x: auto;
+  }
+  .scroll-x::-webkit-scrollbar {
+    height: 8px;
+  }
+  .scroll-x::-webkit-scrollbar-thumb {
+    background: #c3cbdb;
+    border-radius: 8px;
+  }
+  .scroll-x::-webkit-scrollbar-thumb:hover {
+    background: #a6b1c7;
+  }
 }
-.scroll-x::-webkit-scrollbar {
-  height: 8px;
-}
-.scroll-x::-webkit-scrollbar-thumb {
-  background: #cbd6de;
-  border-radius: 8px;
+
+/* Fokus keyboard terlihat jelas — aksesibilitas */
+:focus-visible {
+  outline: 2px solid #d6964a;
+  outline-offset: 2px;
+  border-radius: 4px;
 }
 
 @media print {
@@ -70,9 +130,13 @@ body {
   }
 }
 
+/* Hormati pengguna yang mematikan animasi di perangkatnya */
 @media (prefers-reduced-motion: reduce) {
-  * {
-    animation: none !important;
-    transition: none !important;
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
   }
 }

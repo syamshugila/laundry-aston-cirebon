@@ -126,7 +126,7 @@ export default function ReportsPage() {
             Periode {tanggal(batas)} — {tanggal(Date.now())}
           </p>
 
-          <div className="mb-6 grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-6">
+          <div className="stagger mb-6 grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-6">
             <StatCard label="Total Nota" value={ringkas.nota} />
             <StatCard label="Total Item" value={ringkas.item} />
             <StatCard label="Nilai Laundry" value={rupiah(ringkas.pendapatan)} tone="brand" />

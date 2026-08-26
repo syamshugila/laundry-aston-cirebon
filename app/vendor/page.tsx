@@ -1,7 +1,7 @@
 "use client";
 import { useMemo } from "react";
 import { useOrders } from "@/lib/hooks";
-import { PageHeader, Spinner, Notice, EmptyState } from "@/components/ui";
+import { PageHeader, Notice, EmptyState, SkeletonList } from "@/components/ui";
 import { KartuNota } from "@/components/WorkQueue";
 import { tanggalJam } from "@/lib/format";
 
@@ -39,7 +39,7 @@ export default function VendorPage() {
       )}
 
       {loading ? (
-        <Spinner />
+        <SkeletonList rows={5} />
       ) : (
         <div className="space-y-8">
           <section>
@@ -55,7 +55,7 @@ export default function VendorPage() {
             {siapKirim.length === 0 ? (
               <EmptyState icon="truck" title="Tidak ada yang perlu dikirim" desc="Semua item rute vendor sudah diserahkan." />
             ) : (
-              <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-3">
+              <div className="stagger grid gap-3 sm:grid-cols-2 xl:grid-cols-3">
                 {siapKirim.map((o) => (
                   <KartuNota key={o.id} o={o} />
                 ))}
@@ -66,12 +66,12 @@ export default function VendorPage() {
           <section>
             <div className="mb-3 flex items-center gap-2">
               <h2 className="text-[16px] font-bold text-ink">Sedang di Vendor</h2>
-              <span className="pill bg-amber-50 text-amber-800 ring-amber-200">{diVendor.length} nota</span>
+              <span className="pill bg-gold-50 text-gold-800 ring-gold-200">{diVendor.length} nota</span>
             </div>
             {diVendor.length === 0 ? (
               <EmptyState icon="box" title="Tidak ada barang di luar hotel" desc="Semua cucian tamu sedang berada di dalam gedung." />
             ) : (
-              <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-3">
+              <div className="stagger grid gap-3 sm:grid-cols-2 xl:grid-cols-3">
                 {diVendor.map((o) => (
                   <div key={o.id}>
                     <KartuNota o={o} />

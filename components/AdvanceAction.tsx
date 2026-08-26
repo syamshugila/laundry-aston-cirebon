@@ -193,7 +193,7 @@ export default function AdvanceAction({ order }: { order: LaundryOrder }) {
                   ))}
                 </select>
                 {vendors.length === 0 && (
-                  <p className="mt-1 text-[12.5px] text-amber-700">
+                  <p className="mt-1 text-[12.5px] text-gold-700">
                     Belum ada vendor terdaftar. Tambahkan lebih dulu di Master Data.
                   </p>
                 )}
@@ -294,7 +294,7 @@ export default function AdvanceAction({ order }: { order: LaundryOrder }) {
                   <span>{c.t}</span>
                 </label>
               ))}
-              <p className="pt-1 text-[12.5px] text-amber-700">
+              <p className="pt-1 text-[12.5px] text-gold-700">
                 Setelah dikunci, nota tidak bisa diubah oleh siapa pun.
               </p>
             </div>

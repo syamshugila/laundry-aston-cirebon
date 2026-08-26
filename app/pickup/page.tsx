@@ -295,7 +295,7 @@ export default function PickupPage() {
                           onClick={() => ubahItem(i, { route: it.route === "vendor" ? "in_house" : "vendor" })}
                           className={`rounded-lg border px-3 py-2 text-[12.5px] font-semibold ${
                             it.route === "vendor"
-                              ? "border-amber-300 bg-amber-50 text-amber-800"
+                              ? "border-gold-300 bg-gold-50 text-gold-800"
                               : "border-line bg-white text-ink-2"
                           }`}
                           title="Klik untuk memindahkan rute"

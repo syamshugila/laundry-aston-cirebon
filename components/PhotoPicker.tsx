@@ -110,7 +110,7 @@ export default function PhotoPicker({
 
       {hint && <p className="mt-1.5 text-[12.5px] text-ink-3">{hint}</p>}
       {!uploadReady && (
-        <p className="mt-1.5 text-[12.5px] text-amber-700">
+        <p className="mt-1.5 text-[12.5px] text-gold-700">
           Upload foto belum aktif. Isi <b>NEXT_PUBLIC_UPLOAD_URL</b> (lihat README bagian Upload Foto).
         </p>
       )}

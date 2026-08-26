@@ -1,6 +1,6 @@
 /**
  * =====================================================================
- * UPLOAD FOTO KE GOOGLE DRIVE — VERITAS Guest Laundry
+ * UPLOAD FOTO KE GOOGLE DRIVE — Aston Cirebon Guest Laundry
  * =====================================================================
  * Kode ini dipasang di https://script.google.com (Google Apps Script).
  * Tugasnya sederhana: menerima foto dari aplikasi, menyimpannya ke
@@ -70,7 +70,7 @@ function doPost(e) {
 }
 
 function doGet() {
-  return balas({ status: "ok", message: "Layanan upload VERITAS siap." });
+  return balas({ status: "ok", message: "Layanan upload Aston Cirebon siap." });
 }
 
 function balas(obj) {

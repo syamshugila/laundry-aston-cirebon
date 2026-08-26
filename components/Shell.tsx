@@ -4,8 +4,9 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useAuth } from "@/lib/auth-context";
 import { HOTEL_NAME } from "@/lib/firebase";
-import { ROLE_LABEL } from "@/lib/status";
+import { ROLE_LABEL, canCreateOrder } from "@/lib/status";
 import Icon, { type IconName } from "./Icon";
+import Brand, { Monogram } from "./Brand";
 import LoginScreen from "./LoginScreen";
 import { Spinner } from "./ui";
 import type { Role } from "@/lib/types";
@@ -59,6 +60,7 @@ export default function Shell({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
   const [open, setOpen] = useState(false);
   const [online, setOnline] = useState(true);
+  const [menuAkun, setMenuAkun] = useState(false);
 
   useEffect(() => {
     const set = () => setOnline(navigator.onLine);
@@ -71,42 +73,56 @@ export default function Shell({ children }: { children: React.ReactNode }) {
     };
   }, []);
 
-  useEffect(() => setOpen(false), [pathname]);
+  useEffect(() => {
+    setOpen(false);
+    setMenuAkun(false);
+  }, [pathname]);
 
   if (!configured) return <SetupScreen />;
-  if (loading) return <div className="grid min-h-screen place-items-center"><Spinner label="Menyiapkan aplikasi…" /></div>;
+  if (loading)
+    return (
+      <div className="grid min-h-screen place-items-center">
+        <div className="animate-fadeIn text-center">
+          <Monogram className="mx-auto mb-4 h-14 w-14 text-[30px] animate-pulseRing" ring />
+          <Spinner label="Menyiapkan aplikasi…" />
+        </div>
+      </div>
+    );
   if (!user) return <LoginScreen />;
   if (role === "pending") return <PendingScreen name={profile?.name || user.email || ""} onLogout={logout} />;
 
+  const namaTampil = profile?.name || user.displayName || user.email || "";
+
   return (
     <div className="min-h-screen lg:flex">
-      {/* ---------- Sidebar ---------- */}
+      {/* ============ Sidebar navy ============ */}
       <aside
-        className={`fixed inset-y-0 left-0 z-40 w-[250px] shrink-0 border-r border-line bg-white transition-transform lg:static lg:translate-x-0 ${
+        className={`fixed inset-y-0 left-0 z-40 w-[262px] shrink-0 bg-navy-sheen transition-transform duration-300 lg:static lg:translate-x-0 ${
           open ? "translate-x-0" : "-translate-x-full"
         }`}
       >
         <div className="flex h-full flex-col">
-          <div className="flex items-center gap-2.5 border-b border-line px-4 py-4">
-            <div className="grid h-9 w-9 shrink-0 place-items-center rounded-lg bg-brand-700 text-white">
-              <Icon name="box" className="h-5 w-5" />
-            </div>
-            <div className="min-w-0">
-              <p className="truncate text-[15px] font-extrabold leading-tight tracking-tight text-ink">VERITAS</p>
-              <p className="truncate text-[10.5px] uppercase tracking-[0.1em] text-ink-3">Guest Laundry</p>
-            </div>
-            <button onClick={() => setOpen(false)} className="ml-auto rounded-md p-1.5 text-ink-3 hover:bg-slate-100 lg:hidden" aria-label="Tutup menu">
+          <div className="flex items-center gap-2 border-b border-white/10 px-4 py-4">
+            <Brand tone="dark" />
+            <button
+              onClick={() => setOpen(false)}
+              className="ml-auto rounded-md p-1.5 text-white/60 transition hover:bg-white/10 hover:text-white lg:hidden"
+              aria-label="Tutup menu"
+            >
               <Icon name="close" className="h-5 w-5" />
             </button>
           </div>
 
-          <nav className="flex-1 overflow-y-auto px-2.5 py-3">
+          <nav className="flex-1 overflow-y-auto px-2.5 py-4">
             {NAV.map((g) => {
               const items = g.items.filter((i) => boleh(i, role));
               if (!items.length) return null;
               return (
-                <div key={g.group} className="mb-4">
-                  <p className="px-2.5 pb-1.5 text-[10px] font-bold uppercase tracking-[0.13em] text-ink-3">{g.group}</p>
+                <div key={g.group} className="mb-5">
+                  <p className="flex items-center gap-2 px-2.5 pb-2 text-[9.5px] font-bold uppercase tracking-[0.18em] text-gold-500/70">
+                    {g.group}
+                    <span className="h-px flex-1 bg-white/10" />
+                  </p>
                   <ul className="space-y-0.5">
                     {items.map((i) => {
                       const active = i.href === "/" ? pathname === "/" : pathname.startsWith(i.href);
@@ -114,11 +130,21 @@ export default function Shell({ children }: { children: React.ReactNode }) {
                         <li key={i.href}>
                           <Link
                             href={i.href}
-                            className={`flex items-center gap-2.5 rounded-lg px-2.5 py-2 text-[14px] font-medium transition ${
-                              active ? "bg-brand-50 text-brand-700" : "text-ink-2 hover:bg-slate-50 hover:text-ink"
+                            className={`group relative flex items-center gap-2.5 rounded-lg py-2.5 pl-3.5 pr-2.5 text-[14px] font-medium transition duration-150 ${
+                              active
+                                ? "bg-white/[0.12] text-white"
+                                : "text-white/65 hover:bg-white/[0.07] hover:text-white"
                             }`}
                           >
-                            <Icon name={i.icon} className="h-[18px] w-[18px] shrink-0" />
+                            <span
+                              className={`absolute left-0 top-1/2 -translate-y-1/2 rounded-r-full bg-gold-500 transition-all duration-200 ${
+                                active ? "h-6 w-[3px]" : "h-0 w-[3px] group-hover:h-3"
+                              }`}
+                            />
+                            <Icon
+                              name={i.icon}
+                              className={`h-[18px] w-[18px] shrink-0 transition ${active ? "text-gold-400" : "text-white/50 group-hover:text-gold-300"}`}
+                            />
                             <span className="truncate">{i.label}</span>
                           </Link>
                         </li>
@@ -130,19 +156,29 @@ export default function Shell({ children }: { children: React.ReactNode }) {
             })}
           </nav>
 
-          <div className="border-t border-line px-4 py-3">
-            <p className="text-[10px] font-bold uppercase tracking-[0.13em] text-ink-3">Peran Aktif</p>
-            <p className="mt-0.5 text-[13.5px] font-semibold text-brand-700">{ROLE_LABEL[role]}</p>
+          <div className="border-t border-white/10 px-4 py-3.5">
+            <p className="text-[9.5px] font-bold uppercase tracking-[0.18em] text-white/40">Peran Aktif</p>
+            <p className="mt-0.5 text-[13.5px] font-semibold text-gold-400">{ROLE_LABEL[role]}</p>
           </div>
         </div>
       </aside>
 
-      {open && <button className="fixed inset-0 z-30 bg-ink/30 lg:hidden" onClick={() => setOpen(false)} aria-label="Tutup menu" />}
+      {open && (
+        <button
+          className="fixed inset-0 z-30 animate-fadeIn bg-brand-900/40 backdrop-blur-[2px] lg:hidden"
+          onClick={() => setOpen(false)}
+          aria-label="Tutup menu"
+        />
+      )}
 
-      {/* ---------- Konten ---------- */}
+      {/* ============ Konten ============ */}
       <div className="flex min-w-0 flex-1 flex-col">
-        <header className="sticky top-0 z-20 flex items-center gap-3 border-b border-line bg-white/90 px-4 py-3 backdrop-blur">
-          <button onClick={() => setOpen(true)} className="rounded-md p-1.5 text-ink-2 hover:bg-slate-100 lg:hidden" aria-label="Buka menu">
+        <header className="sticky top-0 z-20 flex items-center gap-3 border-b border-line bg-white/85 px-4 py-3 backdrop-blur-md">
+          <button
+            onClick={() => setOpen(true)}
+            className="rounded-md p-1.5 text-ink-2 transition hover:bg-brand-50 hover:text-brand-700 lg:hidden"
+            aria-label="Buka menu"
+          >
             <Icon name="menu" />
           </button>
 
@@ -151,33 +187,69 @@ export default function Shell({ children }: { children: React.ReactNode }) {
           </Link>
 
           <span
-            className={`inline-flex items-center gap-1.5 rounded-full px-2.5 py-1 text-[11.5px] font-semibold ${
-              online ? "bg-emerald-50 text-emerald-700" : "bg-amber-50 text-amber-800"
+            className={`inline-flex items-center gap-1.5 rounded-full px-2.5 py-1 text-[11.5px] font-semibold transition ${
+              online ? "bg-emerald-50 text-emerald-700" : "bg-gold-100 text-gold-800"
             }`}
-            title={online ? "Terhubung ke server" : "Data disimpan di HP dulu, terkirim otomatis saat sinyal kembali"}
+            title={online ? "Terhubung ke server" : "Data disimpan di perangkat dulu, terkirim otomatis saat sinyal kembali"}
           >
-            <Icon name="wifi" className="h-3.5 w-3.5" />
+            <span className={`h-1.5 w-1.5 rounded-full ${online ? "bg-emerald-500" : "animate-pulse bg-gold-600"}`} />
             {online ? "Tersambung" : "Luring — menunggu sinyal"}
           </span>
 
-          <div className="ml-auto flex items-center gap-3">
-            <div className="hidden text-right sm:block">
-              <p className="text-[13px] font-semibold leading-tight text-ink">{profile?.name || user.displayName}</p>
-              <p className="text-[11px] uppercase tracking-wider text-ink-3">{ROLE_LABEL[role]}</p>
-            </div>
-            <div className="grid h-9 w-9 place-items-center overflow-hidden rounded-full bg-brand-700 text-[13px] font-bold text-white">
-              {(profile?.name || user.displayName || "?").charAt(0).toUpperCase()}
-            </div>
-            <button onClick={logout} className="rounded-md p-2 text-ink-3 hover:bg-slate-100 hover:text-rose-600" title="Keluar" aria-label="Keluar">
-              <Icon name="logout" className="h-[18px] w-[18px]" />
+          <div className="relative ml-auto">
+            <button
+              onClick={() => setMenuAkun((v) => !v)}
+              className="flex items-center gap-2.5 rounded-lg py-1 pl-2 pr-1.5 transition hover:bg-brand-50"
+            >
+              <span className="hidden text-right sm:block">
+                <span className="block text-[13px] font-semibold leading-tight text-ink">{namaTampil}</span>
+                <span className="block text-[10.5px] uppercase tracking-wider text-ink-3">{ROLE_LABEL[role]}</span>
+              </span>
+              <span className="grid h-9 w-9 place-items-center rounded-full bg-navy-sheen text-[13px] font-bold text-gold-400 ring-1 ring-gold-500/30">
+                {namaTampil.charAt(0).toUpperCase()}
+              </span>
+              <Icon name="chevron" className={`h-4 w-4 text-ink-3 transition ${menuAkun ? "rotate-90" : ""}`} />
             </button>
+
+            {menuAkun && (
+              <>
+                <button className="fixed inset-0 z-10 cursor-default" onClick={() => setMenuAkun(false)} aria-label="Tutup menu akun" />
+                <div className="absolute right-0 z-20 mt-2 w-60 animate-slideIn overflow-hidden rounded-xl border border-line bg-white shadow-lift">
+                  <div className="border-b border-line bg-brand-50/50 px-4 py-3">
+                    <p className="truncate text-[14px] font-semibold text-ink">{namaTampil}</p>
+                    <p className="truncate text-[12px] text-ink-3">{user.email}</p>
+                  </div>
+                  <button
+                    onClick={logout}
+                    className="flex w-full items-center gap-2.5 px-4 py-3 text-[14px] font-medium text-ink-2 transition hover:bg-rose-50 hover:text-rose-700"
+                  >
+                    <Icon name="logout" className="h-[18px] w-[18px]" /> Keluar dari aplikasi
+                  </button>
+                </div>
+              </>
+            )}
           </div>
         </header>
 
-        <main className="mx-auto w-full max-w-[1180px] flex-1 px-4 py-6 sm:px-6 sm:py-8">{children}</main>
+        <main key={pathname} className="mx-auto w-full max-w-[1180px] flex-1 animate-fadeUp px-4 py-6 sm:px-6 sm:py-8">
+          {children}
+        </main>
+
+        {/* Tombol pintas di HP — dalam jangkauan ibu jari */}
+        {canCreateOrder(role) && (
+          <Link
+            href="/pickup"
+            className="fixed bottom-5 right-5 z-30 grid h-14 w-14 place-items-center rounded-full bg-gold-500 text-brand-900 shadow-gold transition duration-150 hover:bg-gold-400 active:scale-95 sm:hidden"
+            aria-label="Buat pickup baru"
+          >
+            <Icon name="plus" className="h-6 w-6" />
+          </Link>
+        )}
 
         <footer className="border-t border-line px-4 py-4 text-center text-[12.5px] text-ink-3 sm:px-6">
-          VERITAS Guest Laundry Tracking System · {HOTEL_NAME}
+          <span className="inline-block h-[2px] w-8 rounded-full bg-gold-line align-middle" />
+          <span className="mx-3 align-middle">{HOTEL_NAME} · Guest Laundry Tracking System</span>
+          <span className="inline-block h-[2px] w-8 rounded-full bg-gold-line align-middle" />
         </footer>
       </div>
     </div>
@@ -187,11 +259,12 @@ export default function Shell({ children }: { children: React.ReactNode }) {
 function PendingScreen({ name, onLogout }: { name: string; onLogout: () => void }) {
   return (
     <div className="grid min-h-screen place-items-center px-4">
-      <div className="card max-w-md px-7 py-9 text-center">
-        <div className="mx-auto mb-4 grid h-12 w-12 place-items-center rounded-full bg-amber-50 text-amber-700">
+      <div className="card max-w-md animate-fadeUp px-7 py-9 text-center">
+        <Monogram className="mx-auto mb-5 h-14 w-14 text-[30px]" ring />
+        <div className="mx-auto mb-4 grid h-11 w-11 place-items-center rounded-full bg-gold-50 text-gold-700">
           <Icon name="lock" />
         </div>
-        <h1 className="text-xl font-bold text-ink">Akun belum diberi peran</h1>
+        <h1 className="font-display text-xl font-bold text-ink">Akun belum diberi peran</h1>
         <p className="mt-2 text-[15px] leading-relaxed text-ink-2">
           Halo <b>{name}</b>. Akun Anda sudah terdaftar, tapi Super Admin belum menentukan peran Anda
           (Valet, Attendant, Supervisor, atau HK Leader).
@@ -210,19 +283,25 @@ function PendingScreen({ name, onLogout }: { name: string; onLogout: () => void 
 function SetupScreen() {
   return (
     <div className="grid min-h-screen place-items-center px-4">
-      <div className="card max-w-lg px-7 py-9">
-        <div className="mb-4 grid h-12 w-12 place-items-center rounded-full bg-brand-50 text-brand-700">
-          <Icon name="settings" />
-        </div>
-        <h1 className="text-xl font-bold text-ink">Aplikasi belum tersambung ke Firebase</h1>
+      <div className="card max-w-lg animate-fadeUp px-7 py-9">
+        <Monogram className="mb-5 h-12 w-12 text-[26px]" ring />
+        <h1 className="font-display text-xl font-bold text-ink">Aplikasi belum tersambung ke Firebase</h1>
         <p className="mt-2 text-[15px] leading-relaxed text-ink-2">
           Environment Variable Firebase belum diisi, jadi login dan database belum bisa dipakai.
         </p>
         <ol className="mt-4 list-decimal space-y-2 pl-5 text-[14.5px] text-ink-2">
-          <li>Buka file <code className="rounded bg-slate-100 px-1.5 py-0.5">.env.local.example</code>, salin menjadi <code className="rounded bg-slate-100 px-1.5 py-0.5">.env.local</code>.</li>
+          <li>
+            Buka file <code className="rounded bg-brand-50 px-1.5 py-0.5 text-brand-700">.env.local.example</code>, salin
+            menjadi <code className="rounded bg-brand-50 px-1.5 py-0.5 text-brand-700">.env.local</code>.
+          </li>
           <li>Isi nilainya dari Firebase Console → Project settings → Your apps.</li>
-          <li>Jalankan ulang <code className="rounded bg-slate-100 px-1.5 py-0.5">npm run dev</code>.</li>
-          <li>Di Vercel, isi nilai yang sama di Settings → Environment Variables, lalu deploy ulang.</li>
+          <li>
+            Jalankan ulang <code className="rounded bg-brand-50 px-1.5 py-0.5 text-brand-700">npm run dev</code>.
+          </li>
+          <li>
+            Di Vercel, isi nilai yang sama di Settings → Environment Variables dengan tipe <b>Config</b>, lalu
+            deploy ulang.
+          </li>
         </ol>
         <p className="mt-4 text-[13.5px] text-ink-3">Panduan lengkapnya ada di file README.md.</p>
       </div>

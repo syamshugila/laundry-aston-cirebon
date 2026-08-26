@@ -2,7 +2,7 @@
   "name": "laundry-aston-cirebon",
   "version": "1.0.0",
   "private": true,
-  "description": "VERITAS - Sistem Pelacakan Laundry Tamu Hotel Aston Cirebon",
+  "description": "Aston Cirebon Guest Laundry - Sistem Pelacakan Laundry Tamu Hotel Aston Cirebon",
   "scripts": {
     "dev": "next dev",
     "build": "next build",

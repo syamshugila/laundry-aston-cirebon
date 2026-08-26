@@ -2,7 +2,7 @@
 import Link from "next/link";
 import { useOrders } from "@/lib/hooks";
 import { useAuth } from "@/lib/auth-context";
-import { PageHeader, Spinner, EmptyState, Notice, StatusPill } from "@/components/ui";
+import { PageHeader, EmptyState, Notice, StatusPill, SkeletonList } from "@/components/ui";
 import Icon from "@/components/Icon";
 import { canVerify } from "@/lib/status";
 import { rupiah, tanggalJam, durasiJam } from "@/lib/format";
@@ -41,11 +41,11 @@ export default function VerificationPage() {
       </div>
 
       {loading ? (
-        <Spinner />
+        <SkeletonList rows={5} />
       ) : orders.length === 0 ? (
         <EmptyState icon="shield" title="Antrean audit kosong" desc="Semua nota yang sudah diantar telah diverifikasi dan terkunci." />
       ) : (
-        <div className="space-y-3">
+        <div className="stagger space-y-3">
           {orders.map((o) => {
             const kurangFoto = (o.photos?.length || 0) === 0;
             const kurangTtd = (o.signatures?.length || 0) === 0;
@@ -54,7 +54,7 @@ export default function VerificationPage() {
               <Link
                 key={o.id}
                 href={`/orders/${o.id}`}
-                className={`card block px-5 py-4 transition hover:border-brand-300 ${siap ? "" : "border-l-[3px] border-l-amber-500"}`}
+                className={`card block px-5 py-4 transition hover:border-brand-300 ${siap ? "" : "border-l-[3px] border-l-gold-500"}`}
               >
                 <div className="flex flex-wrap items-start justify-between gap-3">
                   <div>

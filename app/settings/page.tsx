@@ -181,7 +181,7 @@ function Baris({ label, nilai, ok }: { label: string; nilai: string; ok?: boolea
   return (
     <div className="flex items-start justify-between gap-3 border-b border-line py-2 last:border-0">
       <span className="text-[13px] text-ink-2">{label}</span>
-      <span className={`text-right text-[13px] font-semibold ${ok === false ? "text-amber-700" : "text-ink"}`}>{nilai}</span>
+      <span className={`text-right text-[13px] font-semibold ${ok === false ? "text-gold-700" : "text-ink"}`}>{nilai}</span>
     </div>
   );
 }

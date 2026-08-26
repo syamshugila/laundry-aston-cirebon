@@ -1,4 +1,4 @@
-# VERITAS · Laundry Aston Cirebon
+# Aston Cirebon · Guest Laundry
 
 Sistem pelacakan laundry tamu Hotel Aston Cirebon — dari kamar, ke laundry atau vendor, sampai kembali ke kamar. Lengkap dengan bukti foto, hitung ganda, tanda tangan, dan verifikasi HK Leader.
 

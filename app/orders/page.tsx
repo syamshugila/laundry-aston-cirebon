@@ -1,7 +1,7 @@
 "use client";
 import { useMemo, useState } from "react";
 import { useOrders } from "@/lib/hooks";
-import { PageHeader, Spinner, EmptyState, Notice } from "@/components/ui";
+import { PageHeader, EmptyState, Notice, SkeletonList } from "@/components/ui";
 import OrderTable from "@/components/OrderTable";
 import Icon from "@/components/Icon";
 import { STATUS_LABEL, STATUS_ORDER, SERVICE_LABEL } from "@/lib/status";
@@ -115,7 +115,7 @@ export default function OrdersPage() {
       )}
 
       {loading ? (
-        <Spinner />
+        <SkeletonList rows={5} />
       ) : hasil.length === 0 ? (
         <EmptyState
           icon="list"

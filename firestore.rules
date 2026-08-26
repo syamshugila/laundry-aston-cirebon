@@ -1,7 +1,7 @@
 rules_version = '2';
 
 // =====================================================================
-// FIRESTORE SECURITY RULES — VERITAS Guest Laundry, Hotel Aston Cirebon
+// FIRESTORE SECURITY RULES — Aston Cirebon Guest Laundry
 //
 // Ini adalah keamanan yang sesungguhnya. Menyembunyikan tombol di layar
 // BUKAN keamanan; aturan di file inilah yang tidak bisa ditembus.

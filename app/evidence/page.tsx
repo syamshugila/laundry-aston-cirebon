@@ -2,7 +2,7 @@
 import { useMemo, useState } from "react";
 import Link from "next/link";
 import { useOrders } from "@/lib/hooks";
-import { PageHeader, Spinner, EmptyState, Notice } from "@/components/ui";
+import { PageHeader, EmptyState, Notice, SkeletonList } from "@/components/ui";
 import Icon from "@/components/Icon";
 import { tanggalJam } from "@/lib/format";
 
@@ -69,7 +69,7 @@ export default function EvidencePage() {
       </div>
 
       {loading ? (
-        <Spinner />
+        <SkeletonList rows={5} />
       ) : rows.length === 0 ? (
         <EmptyState
           icon="camera"
@@ -81,7 +81,7 @@ export default function EvidencePage() {
           <p className="mb-3 text-[13.5px] text-ink-2">
             <b className="text-ink">{totalFoto}</b> foto dari <b className="text-ink">{rows.length}</b> nota
           </p>
-          <div className="space-y-3">
+          <div className="stagger space-y-3">
             {rows.map(({ o, photos, signatures }) => (
               <div key={o.id} className="card px-5 py-4">
                 <div className="flex flex-wrap items-center justify-between gap-2">

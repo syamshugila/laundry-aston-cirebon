@@ -2,7 +2,7 @@
 import Link from "next/link";
 import { useMemo, useState } from "react";
 import { useOrders } from "@/lib/hooks";
-import { PageHeader, Spinner, EmptyState, Notice, StatusPill, SlaBadge } from "./ui";
+import { PageHeader, Spinner, EmptyState, Notice, StatusPill, SlaBadge, SlaBar, SkeletonList } from "./ui";
 import Icon from "./Icon";
 import OrderTable from "./OrderTable";
 import { lantaiDari, rupiah, tanggalJam } from "@/lib/format";
@@ -80,7 +80,7 @@ export default function WorkQueue({
       )}
 
       {loading ? (
-        <Spinner />
+        <SkeletonList rows={5} />
       ) : rows.length === 0 ? (
         <EmptyState icon="check" title={emptyTitle} desc={emptyDesc} />
       ) : tampilTabel ? (
@@ -94,7 +94,7 @@ export default function WorkQueue({
                 <span className="pill bg-brand-50 text-brand-700 ring-brand-200">{list.length} nota</span>
                 <span className="text-[12.5px] text-ink-3">— satu kali jalan bisa mengantar semuanya</span>
               </div>
-              <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-3">
+              <div className="stagger grid gap-3 sm:grid-cols-2 xl:grid-cols-3">
                 {list.map((o) => (
                   <KartuNota key={o.id} o={o} />
                 ))}
@@ -103,7 +103,7 @@ export default function WorkQueue({
           ))}
         </div>
       ) : (
-        <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-3">
+        <div className="stagger grid gap-3 sm:grid-cols-2 xl:grid-cols-3">
           {rows.map((o) => (
             <KartuNota key={o.id} o={o} />
           ))}
@@ -119,28 +119,45 @@ export function KartuNota({ o }: { o: LaundryOrder }) {
   return (
     <Link
       href={`/orders/${o.id}`}
-      className={`card block px-4 py-4 transition hover:border-brand-300 ${telat && !selesai ? "border-l-[3px] border-l-rose-500" : ""}`}
+      className={`card card-hover group relative block overflow-hidden px-4 py-4 ${
+        telat && !selesai ? "border-l-[3px] border-l-rose-500" : ""
+      }`}
     >
       <div className="flex items-start justify-between gap-2">
-        <div className="min-w-0">
-          <p className="text-[16px] font-bold leading-tight text-ink">Kamar {o.roomNumber}</p>
-          <p className="truncate text-[13.5px] text-ink-2">{o.guestName}</p>
+        <div className="flex min-w-0 items-center gap-2.5">
+          <span
+            className={`grid h-9 w-9 shrink-0 place-items-center rounded-lg bg-brand-50 font-bold text-brand-700 transition group-hover:bg-gold-100 group-hover:text-gold-800 ${
+              o.roomNumber.length > 3 ? "text-[11px]" : "text-[12.5px]"
+            }`}
+          >
+            {o.roomNumber}
+          </span>
+          <div className="min-w-0">
+            <p className="text-[15.5px] font-bold leading-tight text-ink">Kamar {o.roomNumber}</p>
+            <p className="truncate text-[13px] text-ink-2">{o.guestName}</p>
+          </div>
         </div>
         <StatusPill status={o.status} />
       </div>
 
-      <p className="mt-2 font-mono text-[11.5px] text-ink-3">{o.trackingCode}</p>
+      <p className="mt-2.5 font-mono text-[11.5px] text-ink-3">{o.trackingCode}</p>
 
       <div className="mt-3 flex flex-wrap items-center gap-1.5">
         <span className="pill bg-slate-100 text-slate-600 ring-slate-200">{o.qtyHotelTotal} item</span>
         <span className="pill bg-slate-100 text-slate-600 ring-slate-200">{SERVICE_LABEL[o.serviceType]}</span>
         {o.route !== "in_house" && (
-          <span className="pill bg-amber-50 text-amber-800 ring-amber-200">
+          <span className="pill bg-gold-50 text-gold-800 ring-gold-200">
             {o.route === "mixed" ? "Campuran" : "Vendor"}
           </span>
         )}
         {o.qtyMismatch && <span className="pill bg-rose-50 text-rose-700 ring-rose-200">Selisih</span>}
-        {o.openIssueCount > 0 && <span className="pill bg-rose-50 text-rose-700 ring-rose-200">{o.openIssueCount} kendala</span>}
+        {o.openIssueCount > 0 && (
+          <span className="pill bg-rose-50 text-rose-700 ring-rose-200">{o.openIssueCount} kendala</span>
+        )}
+      </div>
+
+      <div className="mt-3.5">
+        <SlaBar mulai={o.timestamps.picked_up || o.createdAt} target={o.promisedAt} done={selesai} />
       </div>
 
       <div className="mt-3 flex items-center justify-between border-t border-line pt-2.5">
