@@ -22,7 +22,7 @@ import {
   type Unsubscribe,
 } from "firebase/firestore";
 import { getDb, HOTEL_CODE } from "./firebase";
-import { buatKodeLacak, todayKey } from "./format";
+import { buatKodeLacak, todayKey, keMs } from "./format";
 import { DEFAULT_SETTINGS, computePromisedAt } from "./status";
 import type {
   LaundryOrder,
@@ -409,7 +409,13 @@ export async function hapusVendor(id: string) {
 /* ------------------------------------------------------------------ */
 export async function ambilPengguna(): Promise<AppUser[]> {
   const snap = await getDocs(collection(getDb(), C.users));
-  return snap.docs.map((d) => ({ ...(d.data() as AppUser), uid: d.id }));
+  return snap.docs
+    .map((d) => {
+      const data = d.data() as AppUser;
+      // createdAt bisa berupa Timestamp Firestore atau angka biasa — samakan dulu.
+      return { ...data, uid: d.id, createdAt: keMs(data.createdAt) ?? 0 };
+    })
+    .sort((a, b) => (a.name || a.email).localeCompare(b.name || b.email));
 }
 
 export async function ubahPeran(uid: string, role: Role, active: boolean) {

@@ -5,6 +5,29 @@ export function rupiah(n: number | undefined | null): string {
   return "Rp " + v.toLocaleString("id-ID");
 }
 
+/**
+ * Ubah nilai waktu apa pun menjadi epoch milidetik.
+ * Firestore bisa mengembalikan Timestamp (punya .toMillis / .seconds),
+ * sementara aplikasi ini menyimpan angka biasa. Fungsi ini menyamakan
+ * keduanya supaya tidak muncul tulisan "Invalid Date".
+ */
+export function keMs(nilai: unknown): number | null {
+  if (nilai == null) return null;
+  if (typeof nilai === "number") return Number.isFinite(nilai) ? nilai : null;
+  if (nilai instanceof Date) return nilai.getTime();
+  if (typeof nilai === "object") {
+    const o = nilai as { toMillis?: () => number; seconds?: number; _seconds?: number };
+    if (typeof o.toMillis === "function") return o.toMillis();
+    if (typeof o.seconds === "number") return o.seconds * 1000;
+    if (typeof o._seconds === "number") return o._seconds * 1000;
+  }
+  if (typeof nilai === "string") {
+    const t = Date.parse(nilai);
+    return Number.isNaN(t) ? null : t;
+  }
+  return null;
+}
+
 export function tanggal(ms?: number | null): string {
   if (!ms) return "—";
   return new Date(ms).toLocaleDateString("id-ID", {

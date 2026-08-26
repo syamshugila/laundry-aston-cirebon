@@ -5,7 +5,7 @@
 // =====================================================================
 import { createContext, useContext, useEffect, useMemo, useState, type ReactNode } from "react";
 import { onAuthStateChanged, signInWithPopup, signOut, type User } from "firebase/auth";
-import { doc, getDoc, setDoc, serverTimestamp } from "firebase/firestore";
+import { doc, getDoc, setDoc } from "firebase/firestore";
 import { getFirebaseAuth, getDb, googleProvider, firebaseReady, SUPER_ADMIN_EMAILS } from "./firebase";
 import type { AppUser, Role } from "./types";
 
@@ -58,17 +58,19 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
         if (!snap.exists()) {
           // Pengguna baru: dibuat dengan peran "pending" sampai admin memberi peran.
-          const baru: Omit<AppUser, "createdAt"> & { createdAt: unknown } = {
+          // Disimpan sebagai angka epoch supaya tanggalnya bisa langsung dibaca
+          // di semua halaman tanpa perlu diubah dari Timestamp.
+          const baru: AppUser = {
             uid: u.uid,
             email,
             name: u.displayName || email,
             photoURL: u.photoURL || "",
             role: isSuper ? "super_admin" : "pending",
             active: true,
-            createdAt: serverTimestamp(),
+            createdAt: Date.now(),
           };
           await setDoc(ref, baru, { merge: true });
-          setProfile({ ...(baru as unknown as AppUser), createdAt: Date.now() });
+          setProfile(baru);
         } else {
           const data = snap.data() as AppUser;
           // Super admin dari ENV selalu menang, supaya tidak pernah terkunci di luar.

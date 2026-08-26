@@ -4,7 +4,7 @@ import { useAuth } from "@/lib/auth-context";
 import { ambilPengguna, ubahPeran } from "@/lib/data";
 import { PageHeader, Spinner, Notice, EmptyState } from "@/components/ui";
 import { ROLE_LABEL, canManageMaster } from "@/lib/status";
-import { tanggal } from "@/lib/format";
+import { tanggal, keMs } from "@/lib/format";
 import type { AppUser, Role } from "@/lib/types";
 
 const PERAN: Role[] = ["pending", "valet", "attendant", "hk_supervisor", "hk_leader", "front_office", "super_admin"];
@@ -107,7 +107,7 @@ export default function UsersPage() {
                       {diriSendiri && <span className="ml-2 pill bg-brand-50 text-brand-700 ring-brand-200">Anda</span>}
                     </td>
                     <td className="td font-mono text-[13px]">{u.email}</td>
-                    <td className="td">{u.createdAt ? tanggal(u.createdAt) : "—"}</td>
+                    <td className="td">{keMs(u.createdAt) ? tanggal(keMs(u.createdAt)) : "—"}</td>
                     <td className="td">
                       <select
                         className="input w-[190px] py-1.5"
