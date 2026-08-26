@@ -5,7 +5,7 @@ import { useAuth } from "@/lib/auth-context";
 import { useOrders, useIssues } from "@/lib/hooks";
 import { StatCard, Spinner, Notice, StatusPill, SlaBadge, SkeletonList } from "@/components/ui";
 import Icon, { type IconName } from "@/components/Icon";
-import { Monogram } from "@/components/Brand";
+
 import { rupiah, todayKey, tanggalJam } from "@/lib/format";
 import { HOTEL_NAME } from "@/lib/firebase";
 
@@ -70,29 +70,29 @@ export default function Dashboard() {
     <>
       {/* ================= Sambutan ================= */}
       <div className="relative mb-6 overflow-hidden rounded-2xl bg-navy-sheen px-6 py-8 text-white shadow-navy sm:px-8 sm:py-9">
-        <span className="pointer-events-none absolute -right-20 -top-24 h-72 w-72 rounded-full bg-gold-500/12 blur-3xl" />
-        <span className="pointer-events-none absolute -bottom-24 left-1/3 h-64 w-64 rounded-full bg-sky-400/10 blur-3xl" />
+        <span className="pointer-events-none absolute -right-20 -top-24 h-72 w-72 rounded-full bg-white/[0.07] blur-3xl" />
+        <span className="pointer-events-none absolute -bottom-24 left-1/3 h-64 w-64 rounded-full bg-silver-500/12 blur-3xl" />
 
         <div className="relative flex flex-wrap items-start justify-between gap-6">
           <div className="animate-fadeUp">
-            <p className="mb-3 inline-flex items-center gap-2 rounded-full bg-white/10 px-3 py-1 text-[11.5px] font-semibold text-gold-300 ring-1 ring-white/10">
+            <p className="mb-3 inline-flex items-center gap-2 rounded-full bg-white/10 px-3 py-1 lockup text-[10px] text-white/70 ring-1 ring-white/15">
               <Icon name="box" className="h-3.5 w-3.5" />
               {HOTEL_NAME} · Housekeeping Operations
             </p>
             <h1 className="font-display text-[28px] font-bold leading-tight tracking-tight sm:text-[34px]">
               {sapaan}, {(profile?.name || "").split(" ")[0] || "Rekan"}
             </h1>
-            <div className="gold-rule my-3.5" />
+            <div className="brand-rule my-3.5" />
             <p className="max-w-xl text-[15px] leading-relaxed text-white/70">
               Pelacakan laundry tamu dari kamar sampai kembali ke kamar — bukti foto, hitung ganda,
               serah terima vendor, dan verifikasi HK Leader.
             </p>
-            <Link href="/pickup" className="btn-gold mt-6">
+            <Link href="/pickup" className="btn-light mt-6">
               <Icon name="plus" className="h-4 w-4" /> Buat Pickup Baru
             </Link>
           </div>
 
-          <Monogram className="hidden h-20 w-20 text-[44px] ring-1 ring-gold-500/30 sm:grid" />
+          <img src="/logo-aston-putih.png" alt="" className="hidden h-16 w-auto opacity-90 sm:block" />
         </div>
       </div>
 
@@ -159,7 +159,7 @@ export default function Dashboard() {
           <div className="card overflow-hidden">
             <div className="flex items-center justify-between border-b border-line px-5 py-4">
               <div className="flex items-center gap-2.5">
-                <span className="h-4 w-[3px] rounded-full bg-gold-500" />
+                <span className="h-4 w-[3px] rounded-full bg-brand-700" />
                 <h2 className="font-display text-[16px] font-bold text-ink">Aktivitas Terbaru</h2>
               </div>
               <Link href="/orders" className="group inline-flex items-center gap-1 text-[13px] font-semibold text-brand-700 hover:text-gold-600">
@@ -186,7 +186,7 @@ export default function Dashboard() {
                       className="group flex items-center gap-3 px-5 py-3.5 transition hover:bg-brand-50/40"
                     >
                       <span
-                        className={`grid h-9 w-9 shrink-0 place-items-center rounded-lg bg-brand-50 font-bold text-brand-700 transition group-hover:bg-gold-100 group-hover:text-gold-800 ${
+                        className={`grid h-9 w-9 shrink-0 place-items-center rounded-lg bg-brand-50 font-bold text-brand-700 transition group-hover:bg-brand-700 group-hover:text-white ${
                           o.roomNumber.length > 3 ? "text-[11px]" : "text-[13px]"
                         }`}
                       >
@@ -218,7 +218,7 @@ export default function Dashboard() {
         <div className="space-y-4">
           <div className="card px-5 py-4">
             <div className="mb-3 flex items-center gap-2.5">
-              <span className="h-4 w-[3px] rounded-full bg-gold-500" />
+              <span className="h-4 w-[3px] rounded-full bg-brand-700" />
               <h2 className="font-display text-[16px] font-bold text-ink">Ringkasan Hari Ini</h2>
             </div>
             <Baris label="Total item tercatat" value={String(s.items)} />
@@ -289,7 +289,7 @@ function QuickCard({
 }) {
   const tones = {
     emerald: "bg-emerald-50/70 border-emerald-200 text-emerald-900 hover:border-emerald-300",
-    gold: "bg-gold-50/80 border-gold-200 text-gold-900 hover:border-gold-300",
+    gold: "bg-brand-50/70 border-brand-200 text-brand-900 hover:border-brand-300",
     rose: "bg-rose-50/70 border-rose-200 text-rose-900 hover:border-rose-300",
   } as const;
   return (

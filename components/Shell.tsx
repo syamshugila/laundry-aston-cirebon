@@ -119,7 +119,7 @@ export default function Shell({ children }: { children: React.ReactNode }) {
               if (!items.length) return null;
               return (
                 <div key={g.group} className="mb-5">
-                  <p className="flex items-center gap-2 px-2.5 pb-2 text-[9.5px] font-bold uppercase tracking-[0.18em] text-gold-500/70">
+                  <p className="flex items-center gap-2 px-2.5 pb-2 lockup text-[9.5px] text-white/45">
                     {g.group}
                     <span className="h-px flex-1 bg-white/10" />
                   </p>
@@ -137,13 +137,13 @@ export default function Shell({ children }: { children: React.ReactNode }) {
                             }`}
                           >
                             <span
-                              className={`absolute left-0 top-1/2 -translate-y-1/2 rounded-r-full bg-gold-500 transition-all duration-200 ${
+                              className={`absolute left-0 top-1/2 -translate-y-1/2 rounded-r-full bg-white transition-all duration-200 ${
                                 active ? "h-6 w-[3px]" : "h-0 w-[3px] group-hover:h-3"
                               }`}
                             />
                             <Icon
                               name={i.icon}
-                              className={`h-[18px] w-[18px] shrink-0 transition ${active ? "text-gold-400" : "text-white/50 group-hover:text-gold-300"}`}
+                              className={`h-[18px] w-[18px] shrink-0 transition ${active ? "text-white" : "text-white/45 group-hover:text-white/80"}`}
                             />
                             <span className="truncate">{i.label}</span>
                           </Link>
@@ -157,8 +157,8 @@ export default function Shell({ children }: { children: React.ReactNode }) {
           </nav>
 
           <div className="border-t border-white/10 px-4 py-3.5">
-            <p className="text-[9.5px] font-bold uppercase tracking-[0.18em] text-white/40">Peran Aktif</p>
-            <p className="mt-0.5 text-[13.5px] font-semibold text-gold-400">{ROLE_LABEL[role]}</p>
+            <p className="lockup text-[9.5px] text-white/40">Peran Aktif</p>
+            <p className="mt-0.5 text-[13.5px] font-semibold text-white">{ROLE_LABEL[role]}</p>
           </div>
         </div>
       </aside>
@@ -188,7 +188,7 @@ export default function Shell({ children }: { children: React.ReactNode }) {
 
           <span
             className={`inline-flex items-center gap-1.5 rounded-full px-2.5 py-1 text-[11.5px] font-semibold transition ${
-              online ? "bg-emerald-50 text-emerald-700" : "bg-gold-100 text-gold-800"
+              online ? "bg-emerald-50 text-emerald-700" : "bg-brand-100 text-brand-800"
             }`}
             title={online ? "Terhubung ke server" : "Data disimpan di perangkat dulu, terkirim otomatis saat sinyal kembali"}
           >
@@ -205,7 +205,7 @@ export default function Shell({ children }: { children: React.ReactNode }) {
                 <span className="block text-[13px] font-semibold leading-tight text-ink">{namaTampil}</span>
                 <span className="block text-[10.5px] uppercase tracking-wider text-ink-3">{ROLE_LABEL[role]}</span>
               </span>
-              <span className="grid h-9 w-9 place-items-center rounded-full bg-navy-sheen text-[13px] font-bold text-gold-400 ring-1 ring-gold-500/30">
+              <span className="grid h-9 w-9 place-items-center rounded-full bg-navy-sheen text-[13px] font-bold text-white ring-1 ring-white/20">
                 {namaTampil.charAt(0).toUpperCase()}
               </span>
               <Icon name="chevron" className={`h-4 w-4 text-ink-3 transition ${menuAkun ? "rotate-90" : ""}`} />
@@ -239,7 +239,7 @@ export default function Shell({ children }: { children: React.ReactNode }) {
         {canCreateOrder(role) && (
           <Link
             href="/pickup"
-            className="fixed bottom-5 right-5 z-30 grid h-14 w-14 place-items-center rounded-full bg-gold-500 text-brand-900 shadow-gold transition duration-150 hover:bg-gold-400 active:scale-95 sm:hidden"
+            className="fixed bottom-5 right-5 z-30 grid h-14 w-14 place-items-center rounded-full bg-brand-700 text-white shadow-navy transition duration-150 hover:bg-brand-600 active:scale-95 sm:hidden"
             aria-label="Buat pickup baru"
           >
             <Icon name="plus" className="h-6 w-6" />
@@ -247,9 +247,9 @@ export default function Shell({ children }: { children: React.ReactNode }) {
         )}
 
         <footer className="border-t border-line px-4 py-4 text-center text-[12.5px] text-ink-3 sm:px-6">
-          <span className="inline-block h-[2px] w-8 rounded-full bg-gold-line align-middle" />
+          <span className="inline-block h-[2px] w-8 rounded-full bg-silver-line align-middle" />
           <span className="mx-3 align-middle">{HOTEL_NAME} · Guest Laundry Tracking System</span>
-          <span className="inline-block h-[2px] w-8 rounded-full bg-gold-line align-middle" />
+          <span className="inline-block h-[2px] w-8 rounded-full bg-silver-line align-middle" />
         </footer>
       </div>
     </div>
@@ -261,7 +261,7 @@ function PendingScreen({ name, onLogout }: { name: string; onLogout: () => void 
     <div className="grid min-h-screen place-items-center px-4">
       <div className="card max-w-md animate-fadeUp px-7 py-9 text-center">
         <Monogram className="mx-auto mb-5 h-14 w-14 text-[30px]" ring />
-        <div className="mx-auto mb-4 grid h-11 w-11 place-items-center rounded-full bg-gold-50 text-gold-700">
+        <div className="mx-auto mb-4 grid h-11 w-11 place-items-center rounded-full bg-brand-50 text-brand-700">
           <Icon name="lock" />
         </div>
         <h1 className="font-display text-xl font-bold text-ink">Akun belum diberi peran</h1>

@@ -1,16 +1,16 @@
-// Logo kunci aplikasi: monogram A emas di atas navy + nama hotel.
-// Dipakai di sidebar, halaman login, dan mana pun identitas hotel perlu tampil.
+/* eslint-disable @next/next/no-img-element */
+// Logo resmi Aston Cirebon Hotel & Convention Center.
+// Versi navy dipakai di latar terang, versi putih di latar navy.
 
 export function Monogram({ className = "h-9 w-9", ring = false }: { className?: string; ring?: boolean }) {
   return (
     <span
-      className={`relative grid shrink-0 place-items-center overflow-hidden rounded-lg bg-navy-sheen ${className} ${
-        ring ? "ring-1 ring-gold-500/40" : ""
+      className={`grid shrink-0 place-items-center overflow-hidden rounded-lg bg-navy-sheen ${className} ${
+        ring ? "ring-1 ring-white/15" : ""
       }`}
       aria-hidden="true"
     >
-      <span className="font-display text-[1.05em] font-bold leading-none text-gold-500">A</span>
-      <span className="absolute bottom-[18%] h-[2px] w-[42%] rounded-full bg-gold-300" />
+      <img src="/icon-192.png" alt="" className="h-full w-full object-cover" />
     </span>
   );
 }
@@ -22,20 +22,24 @@ export default function Brand({
   tone?: "light" | "dark";
   size?: "sm" | "md";
 }) {
-  const judul = tone === "dark" ? "text-white" : "text-ink";
-  const anak = tone === "dark" ? "text-gold-300/80" : "text-ink-3";
-  const besarJudul = size === "sm" ? "text-[14px]" : "text-[16px]";
+  const tinggi = size === "sm" ? "h-8" : "h-10";
+  const garis = tone === "dark" ? "bg-white/20" : "bg-line";
+  const sub = tone === "dark" ? "text-silver-300" : "text-silver-600";
 
   return (
-    <span className="flex items-center gap-2.5">
-      <Monogram className={size === "sm" ? "h-8 w-8 text-[17px]" : "h-9 w-9 text-[19px]"} ring={tone === "dark"} />
-      <span className="min-w-0">
-        <span className={`block truncate font-display font-bold leading-tight tracking-tight ${judul} ${besarJudul}`}>
-          Aston Cirebon
-        </span>
-        <span className={`block truncate text-[10px] font-semibold uppercase tracking-[0.16em] ${anak}`}>
-          Guest Laundry
-        </span>
+    <span className="flex min-w-0 items-center gap-3">
+      <img
+        src={tone === "dark" ? "/logo-aston-putih.png" : "/logo-aston.png"}
+        alt="Aston Cirebon Hotel &amp; Convention Center"
+        className={`${tinggi} w-auto shrink-0`}
+      />
+      <span className={`h-8 w-px shrink-0 ${garis}`} aria-hidden="true" />
+      <span
+        className={`font-display text-[10px] font-medium uppercase leading-[1.35] tracking-brand ${sub}`}
+      >
+        Guest
+        <br />
+        Laundry
       </span>
     </span>
   );

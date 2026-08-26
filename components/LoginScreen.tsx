@@ -27,15 +27,15 @@ export default function LoginScreen() {
       {/* ---------- Sisi kiri: identitas hotel ---------- */}
       <div className="relative hidden flex-col justify-between overflow-hidden bg-navy-sheen px-12 py-14 text-white lg:flex">
         {/* ornamen lembut di latar */}
-        <span className="pointer-events-none absolute -right-24 -top-24 h-80 w-80 rounded-full bg-gold-500/10 blur-3xl" />
-        <span className="pointer-events-none absolute -bottom-28 -left-20 h-96 w-96 rounded-full bg-sky-400/10 blur-3xl" />
+        <span className="pointer-events-none absolute -right-24 -top-24 h-80 w-80 rounded-full bg-white/[0.06] blur-3xl" />
+        <span className="pointer-events-none absolute -bottom-28 -left-20 h-96 w-96 rounded-full bg-silver-500/10 blur-3xl" />
 
         <div className="relative animate-fadeUp">
           <Brand tone="dark" />
         </div>
 
         <div className="relative stagger">
-          <div className="gold-rule mb-6" />
+          <div className="brand-rule mb-6" />
           <h2 className="max-w-lg font-display text-[36px] font-bold leading-[1.12] tracking-tight">
             Setiap helai punya jejak, setiap serah terima punya bukti.
           </h2>
@@ -46,7 +46,7 @@ export default function LoginScreen() {
           <ul className="mt-9 space-y-3 text-[14.5px] text-white/80">
             {JANJI.map((t) => (
               <li key={t} className="flex items-start gap-3">
-                <span className="mt-0.5 grid h-5 w-5 shrink-0 place-items-center rounded-full bg-gold-500/15 text-gold-400">
+                <span className="mt-0.5 grid h-5 w-5 shrink-0 place-items-center rounded-full bg-white/10 text-white/80">
                   <Icon name="check" className="h-3 w-3" />
                 </span>
                 <span>{t}</span>
@@ -83,7 +83,7 @@ export default function LoginScreen() {
           <button
             onClick={masuk}
             disabled={sedang}
-            className="btn-ghost mt-7 w-full py-3.5 text-[15px] hover:border-gold-300 hover:bg-gold-50/50 hover:shadow-gold"
+            className="btn-ghost mt-7 w-full py-3.5 text-[15px] hover:border-brand-300 hover:bg-brand-50/50 hover:shadow-soft"
           >
             {sedang ? (
               <>
@@ -100,7 +100,7 @@ export default function LoginScreen() {
 
           <div className="my-7 flex items-center gap-3">
             <span className="h-px flex-1 bg-line" />
-            <span className="text-[11px] font-semibold uppercase tracking-[0.14em] text-ink-3">Pertama kali?</span>
+            <span className="lockup text-[10px] text-silver-600">Pertama kali?</span>
             <span className="h-px flex-1 bg-line" />
           </div>
 

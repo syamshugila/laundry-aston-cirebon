@@ -1,10 +1,10 @@
 import type { Config } from "tailwindcss";
 
 /**
- * Palet warna mengikuti identitas resmi Aston:
- *   Prussian Blue #001C5A  → warna utama (navy)
- *   Di Serria     #D6964A  → aksen emas
- *   Jordy Blue    #6BBAEF  → biru langit (pendukung)
+ * Palet diambil langsung dari logo resmi Aston Cirebon Hotel & Convention Center:
+ *   Navy  #00205B  → warna utama ("ASTON")
+ *   Perak #939598  → warna pendamping ("CIREBON" & tagline)
+ * Emas hanya dipakai tipis sebagai penanda "perlu perhatian" (warna korporat Aston).
  */
 const config: Config = {
   content: [
@@ -16,16 +16,28 @@ const config: Config = {
     extend: {
       colors: {
         brand: {
-          50: "#EDF1F9",
-          100: "#D5DFF1",
-          200: "#A6BADF",
-          300: "#7291C8",
-          400: "#4468AB",
-          500: "#22458A",
-          600: "#0C2C6E",
-          700: "#001C5A", // Prussian Blue — warna resmi Aston
-          800: "#001444",
-          900: "#000D2E",
+          50: "#EDF0F6",
+          100: "#D3DAE9",
+          200: "#A3B0CD",
+          300: "#6E80AC",
+          400: "#40558C",
+          500: "#1B3570",
+          600: "#08265F",
+          700: "#00205B", // navy logo Aston
+          800: "#001845",
+          900: "#00102E",
+        },
+        silver: {
+          50: "#F5F6F7",
+          100: "#E8E9EB",
+          200: "#D2D4D7",
+          300: "#B9BBBF",
+          400: "#A6A8AC",
+          500: "#939598", // perak logo Aston
+          600: "#76787C",
+          700: "#5B5D61",
+          800: "#414346",
+          900: "#2B2C2F",
         },
         gold: {
           50: "#FCF7EE",
@@ -33,60 +45,47 @@ const config: Config = {
           200: "#F0D5A9",
           300: "#E6BC7C",
           400: "#DDA75D",
-          500: "#D6964A", // Di Serria — warna resmi Aston
+          500: "#D6964A",
           600: "#B77C34",
           700: "#93622A",
           800: "#6C4820",
-          900: "#472F15",
-        },
-        sky: {
-          50: "#EFF8FE",
-          100: "#DBEEFC",
-          200: "#B6DDF8",
-          300: "#8ECBF3",
-          400: "#6BBAEF", // Jordy Blue — warna resmi Aston
-          500: "#4A9FD8",
-          600: "#357FB3",
-          700: "#28618A",
         },
         ink: {
           DEFAULT: "#101A2E",
           2: "#4A5670",
           3: "#7C879E",
         },
-        line: "#DCE1EC",
-        ground: "#EFF2F7",
+        line: "#DDE1E8",
+        ground: "#F0F2F6",
       },
       fontFamily: {
+        // Jost = grotesk geometris bergaya Futura, paling dekat dengan huruf pada logo Aston
         sans: ['"Plus Jakarta Sans"', "system-ui", "-apple-system", "Segoe UI", "Roboto", "sans-serif"],
-        display: ['"Fraunces"', 'Georgia', "serif"],
+        display: ['"Jost"', '"Century Gothic"', "Futura", "system-ui", "sans-serif"],
         mono: ["ui-monospace", "SFMono-Regular", "Menlo", "monospace"],
+      },
+      letterSpacing: {
+        brand: "0.22em",
       },
       boxShadow: {
         card: "0 1px 2px rgba(16,26,46,.06), 0 6px 18px rgba(16,26,46,.05)",
         lift: "0 2px 4px rgba(16,26,46,.06), 0 12px 28px rgba(16,26,46,.10)",
-        gold: "0 6px 20px rgba(214,150,74,.28)",
-        navy: "0 8px 26px rgba(0,28,90,.24)",
+        navy: "0 8px 26px rgba(0,32,91,.24)",
+        soft: "0 6px 20px rgba(0,32,91,.10)",
       },
       backgroundImage: {
-        "navy-sheen": "linear-gradient(135deg, #001C5A 0%, #0C2C6E 48%, #001444 100%)",
-        "gold-line": "linear-gradient(90deg, #D6964A 0%, #E6BC7C 50%, #D6964A 100%)",
+        "navy-sheen": "linear-gradient(135deg, #00205B 0%, #08265F 45%, #001845 100%)",
+        "silver-line": "linear-gradient(90deg, #00205B 0%, #939598 100%)",
       },
       keyframes: {
-        fadeUp: {
-          from: { opacity: "0", transform: "translateY(10px)" },
-          to: { opacity: "1", transform: "none" },
-        },
+        fadeUp: { from: { opacity: "0", transform: "translateY(10px)" }, to: { opacity: "1", transform: "none" } },
         fadeIn: { from: { opacity: "0" }, to: { opacity: "1" } },
-        slideIn: {
-          from: { opacity: "0", transform: "translateX(14px)" },
-          to: { opacity: "1", transform: "none" },
-        },
+        slideIn: { from: { opacity: "0", transform: "translateX(14px)" }, to: { opacity: "1", transform: "none" } },
         shimmer: { from: { backgroundPosition: "-480px 0" }, to: { backgroundPosition: "480px 0" } },
         pulseRing: {
-          "0%": { boxShadow: "0 0 0 0 rgba(214,150,74,.5)" },
-          "70%": { boxShadow: "0 0 0 10px rgba(214,150,74,0)" },
-          "100%": { boxShadow: "0 0 0 0 rgba(214,150,74,0)" },
+          "0%": { boxShadow: "0 0 0 0 rgba(0,32,91,.35)" },
+          "70%": { boxShadow: "0 0 0 12px rgba(0,32,91,0)" },
+          "100%": { boxShadow: "0 0 0 0 rgba(0,32,91,0)" },
         },
       },
       animation: {

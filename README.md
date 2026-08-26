@@ -435,6 +435,28 @@ Versi `15.5.24` adalah versi lama yang tetap mendapat tambalan keamanan, jadi Ve
 
 ---
 
+## Identitas Visual
+
+Diambil langsung dari logo resmi **Aston Cirebon Hotel & Convention Center**:
+
+| Unsur | Nilai | Dipakai untuk |
+|---|---|---|
+| Navy | `#00205B` | Sidebar, header, tombol utama, angka penting |
+| Perak | `#939598` | Label, sub-judul, garis pemisah |
+| Emas | `#D6964A` | Hanya untuk status "perlu perhatian" (warna korporat Aston) |
+| Huruf judul | **Jost** | Grotesk geometris, paling dekat dengan huruf pada logo |
+| Huruf isi | **Plus Jakarta Sans** | Teks layar, tabel, formulir |
+
+File logo ada di folder `public/`:
+
+- `logo-aston.png` — versi navy untuk latar terang
+- `logo-aston-putih.png` — versi putih untuk latar navy
+- `icon-192.png`, `icon-512.png`, `app/icon.png` — favicon, diambil dari huruf **A** pada logo
+
+Kalau hotel memberi file logo versi baru, cukup timpa dua file PNG di `public/` dengan nama yang sama — seluruh aplikasi ikut berubah tanpa mengubah kode.
+
+---
+
 ## Struktur folder
 
 ```

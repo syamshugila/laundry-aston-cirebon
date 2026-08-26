@@ -107,10 +107,10 @@ export function PageHeader({
     <div className="mb-6 flex flex-wrap items-start justify-between gap-4 animate-fadeUp">
       <div>
         {eyebrow && (
-          <p className="mb-1.5 text-[11px] font-semibold uppercase tracking-[0.15em] text-gold-600">{eyebrow}</p>
+          <p className="mb-1.5 lockup text-[10.5px] text-silver-600">{eyebrow}</p>
         )}
         <h1 className="font-display text-2xl font-bold tracking-tight text-ink sm:text-[30px]">{title}</h1>
-        <div className="gold-rule mt-2.5" />
+        <div className="brand-rule mt-2.5" />
         {desc && <p className="mt-3 max-w-2xl text-[15px] leading-relaxed text-ink-2">{desc}</p>}
       </div>
       {action}
@@ -150,7 +150,7 @@ export function EmptyState({
 export function Spinner({ label = "Memuat…" }: { label?: string }) {
   return (
     <div className="flex items-center justify-center gap-3 py-16 text-ink-2">
-      <span className="h-5 w-5 animate-spin rounded-full border-2 border-gold-200 border-t-gold-500" />
+      <span className="h-5 w-5 animate-spin rounded-full border-2 border-brand-100 border-t-brand-700" />
       <span className="text-sm">{label}</span>
     </div>
   );
@@ -240,7 +240,7 @@ export function StatCard({
   const inner = (
     <>
       <div className="flex min-h-[30px] items-start justify-between gap-2">
-        <p className="text-[10.5px] font-semibold uppercase leading-[1.35] tracking-[0.12em] text-ink-3">{label}</p>
+        <p className="font-display text-[10.5px] font-medium uppercase leading-[1.35] tracking-[0.14em] text-silver-600">{label}</p>
         {icon && <Icon name={icon} className="h-4 w-4 shrink-0 text-ink-3/60" />}
       </div>
       <p className={`mt-2 text-[27px] font-bold leading-none tabular-nums ${tones[tone]}`}>
@@ -307,7 +307,7 @@ export function Toast({
         tone === "ok" ? "bg-brand-700 text-white" : "bg-rose-600 text-white"
       }`}
     >
-      <Icon name={tone === "ok" ? "check" : "alert"} className="h-4 w-4 text-gold-400" />
+      <Icon name={tone === "ok" ? "check" : "alert"} className="h-4 w-4 text-white/70" />
       {pesan}
     </div>
   );
