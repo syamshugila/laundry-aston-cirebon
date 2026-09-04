@@ -3,7 +3,7 @@ import Link from "next/link";
 import { StatusPill, SlaBadge } from "./ui";
 import Icon from "./Icon";
 import { rupiah, tanggalJam, lantaiDari } from "@/lib/format";
-import { SERVICE_LABEL } from "@/lib/status";
+import { SERVICE_LABEL, PAYMENT_LABEL, PAYMENT_CLASS } from "@/lib/status";
 import type { LaundryOrder } from "@/lib/types";
 
 export default function OrderTable({
@@ -17,10 +17,11 @@ export default function OrderTable({
 }) {
   return (
     <div className="card scroll-x">
-      <table className="w-full min-w-[840px] border-collapse">
+      <table className="w-full min-w-[1020px] border-collapse">
         <thead className="border-b border-line bg-slate-50/70">
           <tr>
             <th className="th">Kode Lacak</th>
+            <th className="th">Bill &amp; Bayar</th>
             <th className="th">Kamar &amp; Tamu</th>
             <th className="th">Layanan</th>
             <th className="th num text-right">Item</th>
@@ -47,6 +48,18 @@ export default function OrderTable({
                   {o.isLocked && (
                     <span className="pill bg-slate-100 text-slate-600 ring-slate-200">Terkunci</span>
                   )}
+                </div>
+              </td>
+              <td className="td">
+                {o.billNumber ? (
+                  <span className="font-mono text-[13px] font-semibold text-ink">{o.billNumber}</span>
+                ) : (
+                  <span className="text-[12.5px] text-ink-3">belum ada</span>
+                )}
+                <div className="mt-0.5">
+                  <span className={`pill ${PAYMENT_CLASS[o.paymentType || "unset"]}`}>
+                    {PAYMENT_LABEL[o.paymentType || "unset"]}
+                  </span>
                 </div>
               </td>
               <td className="td">

@@ -69,6 +69,19 @@ service cloud.firestore {
       return punyaPeran(['hk_leader']);
     }
 
+    // Nomor bill & cara bayar adalah wewenang Front Office.
+    function bolehPembayaran() {
+      return superAdmin() || (profilAktif() && profil().role == 'front_office');
+    }
+
+    // true bila perubahan HANYA menyentuh kolom pembayaran (+ jejak riwayat).
+    function hanyaUbahPembayaran() {
+      return request.resource.data.diff(resource.data).affectedKeys().hasOnly([
+        'billNumber', 'paymentType', 'paymentRemark', 'paymentBy', 'paymentAt',
+        'updatedAt', 'timeline'
+      ]);
+    }
+
     /* ---------------------------------------------------------------
        PENGGUNA
        --------------------------------------------------------------- */
@@ -106,10 +119,29 @@ service cloud.firestore {
 
       // Nota terkunci tidak bisa diubah siapa pun kecuali Super Admin,
       // dan yang boleh mengunci hanya HK Leader / Super Admin.
+      // PENGECUALIAN: Front Office tetap boleh membetulkan nomor bill dan cara
+      // bayar walau nota sudah terkunci — nomor bill sering baru keluar setelah
+      // cucian diantar. Perubahan lain pada nota terkunci tetap ditolak.
       allow update: if stafAktif()
-                    && (resource.data.isLocked != true || superAdmin())
-                    && (request.resource.data.isLocked != true || leader() || superAdmin());
+                    && (
+                      (
+                        (resource.data.isLocked != true || superAdmin())
+                        && (request.resource.data.isLocked != true || leader() || superAdmin())
+                      )
+                      || (hanyaUbahPembayaran() && bolehPembayaran())
+                    );
 
+      allow delete: if superAdmin();
+    }
+
+    /* ---------------------------------------------------------------
+       PERMINTAAN PENJEMPUTAN (dibuat Front Office)
+       --------------------------------------------------------------- */
+    match /pickup_requests/{reqId} {
+      allow read: if stafAktif();
+      allow create: if punyaPeran(['front_office', 'hk_supervisor', 'hk_leader', 'super_admin']);
+      // Valet & Supervisor menandai permintaan sudah menjadi nota.
+      allow update: if stafAktif();
       allow delete: if superAdmin();
     }
 

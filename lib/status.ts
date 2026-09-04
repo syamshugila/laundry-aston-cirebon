@@ -2,7 +2,7 @@
 // "Mesin status": urutan tahap, siapa yang boleh menaikkan, dan warnanya.
 // Semua aturan alur ada di satu file ini supaya mudah diubah.
 // =====================================================================
-import type { OrderStatus, Role, ServiceType, AppSettings } from "./types";
+import type { OrderStatus, Role, ServiceType, AppSettings, PaymentType } from "./types";
 
 export const STATUS_ORDER: OrderStatus[] = [
   "requested",
@@ -70,7 +70,23 @@ export const TREATMENT_LABEL = {
   wash_press: "Cuci + Setrika",
   press_only: "Setrika Saja",
   dry_clean: "Dry Clean",
+  package: "Paket",
 } as const;
+
+/** Cara bayar — diisi Front Office. */
+export const PAYMENT_LABEL: Record<PaymentType, string> = {
+  unset: "Belum ditentukan",
+  cash_basis: "Cash Basis",
+  charge_to_room: "Charge to Room",
+  included_breakdown: "Included by Breakdown",
+};
+
+export const PAYMENT_CLASS: Record<PaymentType, string> = {
+  unset: "bg-slate-100 text-slate-600 ring-slate-200",
+  cash_basis: "bg-emerald-50 text-emerald-700 ring-emerald-200",
+  charge_to_room: "bg-brand-50 text-brand-700 ring-brand-200",
+  included_breakdown: "bg-gold-50 text-gold-800 ring-gold-200",
+};
 
 export const ROLE_LABEL: Record<Role, string> = {
   super_admin: "Super Admin",
@@ -118,6 +134,25 @@ export function canCreateOrder(role: Role): boolean {
   return ["super_admin", "hk_leader", "hk_supervisor", "valet", "front_office"].includes(role);
 }
 
+/**
+ * Cara bayar & nomor bill adalah wewenang Front Office.
+ * Super Admin ikut disertakan sebagai pemilik sistem, supaya kalau FO
+ * salah isi di luar jam kerja masih ada yang bisa membetulkan.
+ */
+export function canSetPayment(role: Role): boolean {
+  return role === "front_office" || role === "super_admin";
+}
+
+/** Siapa yang boleh membuat permintaan penjemputan (belum jadi nota). */
+export function canCreateRequest(role: Role): boolean {
+  return ["front_office", "super_admin", "hk_leader", "hk_supervisor"].includes(role);
+}
+
+/** Siapa yang boleh mengubah permintaan FO menjadi nota pickup. */
+export function canConvertRequest(role: Role): boolean {
+  return ["valet", "hk_supervisor", "hk_leader", "super_admin"].includes(role);
+}
+
 /** Status berikutnya yang wajar, berdasarkan rute nota. */
 export function nextStatuses(current: OrderStatus, route: string): OrderStatus[] {
   switch (current) {
@@ -125,10 +160,12 @@ export function nextStatuses(current: OrderStatus, route: string): OrderStatus[]
       return ["picked_up"];
     case "picked_up":
       return ["sorted"];
+    // Rute hanya SARAN dari daftar harga. Nota apa pun boleh dikirim ke vendor,
+    // karena di lapangan mesin bisa penuh atau rusak sewaktu-waktu.
     case "sorted":
-      return route === "in_house" ? ["in_process"] : route === "vendor" ? ["on_vendor"] : ["in_process", "on_vendor"];
+      return route === "vendor" ? ["on_vendor", "in_process"] : ["in_process", "on_vendor"];
     case "in_process":
-      return route === "mixed" ? ["on_vendor", "ready"] : ["ready"];
+      return ["ready", "on_vendor"];
     case "on_vendor":
       return ["returned"];
     case "returned":

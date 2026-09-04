@@ -28,7 +28,10 @@ export type OrderStatus =
   | "cancelled";
 
 export type ServiceType = "regular" | "express" | "same_day";
-export type Treatment = "wash_press" | "press_only" | "dry_clean";
+
+/** Cara tamu membayar laundry — diisi oleh Front Office. */
+export type PaymentType = "cash_basis" | "charge_to_room" | "included_breakdown" | "unset";
+export type Treatment = "wash_press" | "press_only" | "dry_clean" | "package";
 export type Route = "in_house" | "vendor" | "mixed";
 
 export interface OrderItem {
@@ -39,6 +42,7 @@ export interface OrderItem {
   qtyGuest: number; // jumlah menurut tamu
   qtyHotel: number; // jumlah menurut hotel
   unitPrice: number;
+  isPackage?: boolean; // baris ini harga paket, bukan harga satuan
   note?: string;
 }
 
@@ -88,6 +92,18 @@ export interface LaundryOrder {
   surcharge: number;
   grandTotal: number;
   chargeStatus: "draft" | "posted" | "complimentary" | "void";
+
+  /** Nomor bill manual, disamakan dengan nota kertas / PMS. */
+  billNumber?: string;
+  /** Cara bayar menurut Front Office. */
+  paymentType?: PaymentType;
+  /** Keterangan bebas cara bayar, mis. "termasuk paket meeting". */
+  paymentRemark?: string;
+  paymentBy?: string;
+  paymentAt?: number | null;
+
+  /** Diisi bila nota ini berasal dari permintaan Front Office. */
+  requestId?: string | null;
 
   promisedAt: number | null;
   createdAt: number;
@@ -141,12 +157,36 @@ export interface LaundryIssue {
   resolvedBy?: string;
 }
 
+/** Permintaan penjemputan yang dibuat Front Office, sebelum jadi nota. */
+export interface PickupRequest {
+  id: string;
+  roomNumber: string;
+  guestName: string;
+  guestPhone?: string;
+  guestCheckoutDate?: string;
+  serviceType: ServiceType;
+  note?: string;
+  billNumber?: string;
+  paymentType?: PaymentType;
+  paymentRemark?: string;
+  status: "open" | "converted" | "cancelled";
+  createdAt: number;
+  createdBy: string;
+  createdByName: string;
+  convertedAt?: number;
+  convertedBy?: string;
+  orderId?: string;
+  cancelNote?: string;
+}
+
 export interface PriceItem {
   id: string; // = itemCode
   itemName: string;
   category: string;
   prices: Partial<Record<Treatment, number>>;
   defaultRoute: "in_house" | "vendor";
+  /** true = baris paket berharga tetap (mis. "Paket Kiloan 5 kg"). */
+  isPackage?: boolean;
   active: boolean;
 }
 

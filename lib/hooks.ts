@@ -1,8 +1,8 @@
 "use client";
 import { useEffect, useState } from "react";
-import { pantauNota, pantauKendala, ambilSettings } from "./data";
+import { pantauNota, pantauKendala, pantauPermintaan, ambilSettings } from "./data";
 import { DEFAULT_SETTINGS } from "./status";
-import type { LaundryOrder, LaundryIssue, OrderStatus, AppSettings } from "./types";
+import type { LaundryOrder, LaundryIssue, PickupRequest, OrderStatus, AppSettings } from "./types";
 
 /** Ambil pengaturan sistem (jam cut-off, SLA, dll). */
 export function useSettings() {
@@ -64,6 +64,27 @@ export function useIssues() {
     return () => unsub();
   }, []);
   return { issues, loading, error };
+}
+
+/** Daftar permintaan penjemputan dari Front Office. */
+export function useRequests() {
+  const [requests, setRequests] = useState<PickupRequest[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+  useEffect(() => {
+    const unsub = pantauPermintaan(
+      (rows) => {
+        setRequests(rows);
+        setLoading(false);
+      },
+      (e) => {
+        setError(pesanRamah(e));
+        setLoading(false);
+      }
+    );
+    return () => unsub();
+  }, []);
+  return { requests, loading, error };
 }
 
 /** Ubah pesan error teknis Firebase menjadi kalimat yang dimengerti staf. */

@@ -23,6 +23,7 @@ const NAV: { group: string; items: NavItem[] }[] = [
     group: "Operasional",
     items: [
       { href: "/", label: "Dashboard", icon: "dashboard" },
+      { href: "/requests", label: "Permintaan Masuk", icon: "clock", roles: ["super_admin", "hk_leader", "hk_supervisor", "valet", "front_office"] },
       { href: "/pickup", label: "Pickup Baru", icon: "plus", roles: ["super_admin", "hk_leader", "hk_supervisor", "valet", "front_office"] },
       { href: "/orders", label: "Daftar Nota", icon: "list" },
       { href: "/process", label: "Sedang Diproses", icon: "clock" },

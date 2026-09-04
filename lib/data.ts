@@ -33,6 +33,8 @@ import type {
   Vendor,
   AppUser,
   AppSettings,
+  PaymentType,
+  PickupRequest,
   Role,
   PhotoRef,
   SignatureRef,
@@ -47,6 +49,7 @@ const C = {
   users: "users",
   settings: "app_settings",
   counters: "counters",
+  requests: "pickup_requests",
 };
 
 /* ------------------------------------------------------------------ */
@@ -115,6 +118,10 @@ export interface InputNotaBaru {
   mismatchNote?: string;
   photos: PhotoRef[];
   signatures: SignatureRef[];
+  billNumber?: string;
+  paymentType?: PaymentType;
+  paymentRemark?: string;
+  requestId?: string | null;
 }
 
 export async function buatNota(
@@ -148,6 +155,12 @@ export async function buatNota(
     surcharge,
     grandTotal,
     chargeStatus: "draft",
+    billNumber: input.billNumber?.trim() || "",
+    paymentType: input.paymentType || "unset",
+    paymentRemark: input.paymentRemark?.trim() || "",
+    paymentAt: input.paymentType && input.paymentType !== "unset" ? now : null,
+    paymentBy: input.paymentType && input.paymentType !== "unset" ? actor.email : "",
+    requestId: input.requestId || null,
     promisedAt: computePromisedAt(input.serviceType, new Date(now), s),
     createdAt: now,
     updatedAt: now,
@@ -261,6 +274,39 @@ export async function batalkanNota(
   });
 }
 
+/**
+ * Ubah nomor bill & cara bayar — wewenang Front Office.
+ * Boleh dilakukan walau nota sudah terkunci, karena nomor bill sering baru
+ * diketahui setelah cucian diantar. Setiap perubahan tercatat di riwayat.
+ */
+export async function ubahPembayaran(
+  order: LaundryOrder,
+  data: { billNumber: string; paymentType: PaymentType; paymentRemark: string },
+  actor: { email: string; name: string }
+): Promise<void> {
+  const now = Date.now();
+  const berubah: string[] = [];
+  if ((order.billNumber || "") !== data.billNumber) berubah.push(`bill: ${data.billNumber || "kosong"}`);
+  if ((order.paymentType || "unset") !== data.paymentType) berubah.push(`bayar: ${data.paymentType}`);
+  if ((order.paymentRemark || "") !== data.paymentRemark) berubah.push(`remark: ${data.paymentRemark || "kosong"}`);
+
+  await updateDoc(doc(getDb(), C.orders, order.id), {
+    billNumber: data.billNumber.trim(),
+    paymentType: data.paymentType,
+    paymentRemark: data.paymentRemark.trim(),
+    paymentBy: actor.email,
+    paymentAt: now,
+    updatedAt: now,
+    timeline: arrayUnion({
+      status: "note",
+      at: now,
+      by: actor.email,
+      byName: actor.name,
+      note: "Data pembayaran diperbarui — " + (berubah.join(", ") || "tanpa perubahan nilai"),
+    }),
+  });
+}
+
 export async function tambahBukti(
   orderId: string,
   photos: PhotoRef[],
@@ -368,6 +414,61 @@ export function pantauKendala(
     (snap) => cb(snap.docs.map((d) => ({ id: d.id, ...(d.data() as Omit<LaundryIssue, "id">) }))),
     (e) => onError?.(e)
   );
+}
+
+/* ------------------------------------------------------------------ */
+/* PERMINTAAN PENJEMPUTAN (dibuat Front Office)                        */
+/* ------------------------------------------------------------------ */
+export async function buatPermintaan(
+  data: Omit<PickupRequest, "id" | "status" | "createdAt" | "createdBy" | "createdByName">,
+  actor: { email: string; name: string }
+): Promise<void> {
+  await addDoc(collection(getDb(), C.requests), {
+    ...data,
+    status: "open",
+    createdAt: Date.now(),
+    createdBy: actor.email,
+    createdByName: actor.name,
+  });
+}
+
+export function pantauPermintaan(
+  cb: (rows: PickupRequest[]) => void,
+  onError?: (e: Error) => void
+): Unsubscribe {
+  const q = query(collection(getDb(), C.requests), orderBy("createdAt", "desc"), qLimit(200));
+  return onSnapshot(
+    q,
+    (snap) => cb(snap.docs.map((d) => ({ id: d.id, ...(d.data() as Omit<PickupRequest, "id">) }))),
+    (e) => onError?.(e)
+  );
+}
+
+export async function ambilPermintaan(id: string): Promise<PickupRequest | null> {
+  const snap = await getDoc(doc(getDb(), C.requests, id));
+  return snap.exists() ? ({ id: snap.id, ...(snap.data() as Omit<PickupRequest, "id">) }) : null;
+}
+
+/** Tandai permintaan sudah menjadi nota pickup. */
+export async function tandaiPermintaanDiproses(
+  id: string,
+  orderId: string,
+  actor: { email: string }
+): Promise<void> {
+  await updateDoc(doc(getDb(), C.requests, id), {
+    status: "converted",
+    convertedAt: Date.now(),
+    convertedBy: actor.email,
+    orderId,
+  });
+}
+
+export async function batalkanPermintaan(id: string, alasan: string): Promise<void> {
+  await updateDoc(doc(getDb(), C.requests, id), {
+    status: "cancelled",
+    cancelNote: alasan,
+    convertedAt: Date.now(),
+  });
 }
 
 /* ------------------------------------------------------------------ */

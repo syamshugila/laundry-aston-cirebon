@@ -25,6 +25,13 @@ export const KATALOG_AWAL: PriceItem[] = [
   { id: "SCARF", itemName: "Selendang / Syal", category: "Lainnya", prices: { wash_press: 18000, dry_clean: 30000 }, defaultRoute: "in_house", active: true },
   { id: "TIE", itemName: "Dasi", category: "Lainnya", prices: { dry_clean: 25000 }, defaultRoute: "vendor", active: true },
   { id: "MUKENA", itemName: "Mukena", category: "Lainnya", prices: { wash_press: 35000 }, defaultRoute: "in_house", active: true },
+
+  // --- PAKET: harga tetap, bukan harga satuan ---------------------
+  { id: "PKG_KILO_3", itemName: "Paket Cuci Kiloan 3 kg", category: "Paket", prices: { package: 75000 }, defaultRoute: "in_house", isPackage: true, active: true },
+  { id: "PKG_KILO_5", itemName: "Paket Cuci Kiloan 5 kg", category: "Paket", prices: { package: 110000 }, defaultRoute: "in_house", isPackage: true, active: true },
+  { id: "PKG_10PCS", itemName: "Paket Hemat 10 Potong", category: "Paket", prices: { package: 150000 }, defaultRoute: "in_house", isPackage: true, active: true },
+  { id: "PKG_SETELAN", itemName: "Paket Setelan Jas (jas + celana)", category: "Paket", prices: { package: 120000 }, defaultRoute: "vendor", isPackage: true, active: true },
+  { id: "PKG_EXPRESS_5", itemName: "Paket Express 5 Potong", category: "Paket", prices: { package: 175000 }, defaultRoute: "in_house", isPackage: true, active: true },
 ];
 
-export const KATEGORI = ["Atasan", "Bawahan", "Setelan", "Luaran", "Lainnya"];
+export const KATEGORI = ["Atasan", "Bawahan", "Setelan", "Luaran", "Paket", "Lainnya"];
