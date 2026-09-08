@@ -8,10 +8,10 @@ import { tanggalJam } from "@/lib/format";
 export default function VendorPage() {
   const { orders, loading, error } = useOrders(["picked_up", "sorted", "in_process", "on_vendor"], 300);
 
-  const siapKirim = useMemo(
-    () => orders.filter((o) => o.route !== "in_house" && o.status !== "on_vendor"),
-    [orders]
-  );
+  // Semua nota yang belum diserahkan boleh dikirim ke vendor — rute dari daftar
+  // harga hanya saran, karena mesin hotel bisa penuh atau rusak sewaktu-waktu.
+  const siapKirim = useMemo(() => orders.filter((o) => o.status !== "on_vendor"), [orders]);
+  const disarankan = useMemo(() => siapKirim.filter((o) => o.route !== "in_house"), [siapKirim]);
   const diVendor = useMemo(() => orders.filter((o) => o.status === "on_vendor"), [orders]);
   const vendorTelat = diVendor.filter((o) => o.vendorPromisedAt && o.vendorPromisedAt < Date.now());
 
@@ -44,16 +44,22 @@ export default function VendorPage() {
         <div className="space-y-8">
           <section>
             <div className="mb-3 flex items-center gap-2">
-              <h2 className="text-[16px] font-bold text-ink">Siap Dikirim</h2>
+              <h2 className="font-display text-[16px] font-bold text-ink">Siap Dikirim</h2>
               <span className="pill bg-brand-50 text-brand-700 ring-brand-200">{siapKirim.length} nota</span>
+              {disarankan.length > 0 && (
+                <span className="pill bg-gold-50 text-gold-800 ring-gold-200">{disarankan.length} disarankan</span>
+              )}
             </div>
             <p className="mb-3 max-w-2xl text-[14px] text-ink-2">
-              Nota yang berisi item rute vendor (dry clean, jas, gaun, kain khusus) dan belum diserahkan.
+              <b>Semua nota</b> di daftar ini boleh dikirim ke vendor — tidak hanya yang berjenis dry clean.
+              Nota bertanda <span className="pill bg-gold-50 text-gold-800 ring-gold-200">Vendor</span> atau
+              <span className="pill ml-1 bg-gold-50 text-gold-800 ring-gold-200">Campuran</span> memang
+              disarankan ke vendor, sisanya keputusan Supervisor.
               Buka notanya, naikkan status sampai <b>Disortir</b>, lalu pilih <b>“Tandai: Di Vendor”</b> untuk
               mengisi surat jalan digital: vendor tujuan, janji retur, foto muatan, dan tanda tangan kurir.
             </p>
             {siapKirim.length === 0 ? (
-              <EmptyState icon="truck" title="Tidak ada yang perlu dikirim" desc="Semua item rute vendor sudah diserahkan." />
+              <EmptyState icon="truck" title="Tidak ada nota yang bisa dikirim" desc="Semua nota sedang di vendor, sudah kembali, atau sudah selesai." />
             ) : (
               <div className="stagger grid gap-3 sm:grid-cols-2 xl:grid-cols-3">
                 {siapKirim.map((o) => (
@@ -65,7 +71,7 @@ export default function VendorPage() {
 
           <section>
             <div className="mb-3 flex items-center gap-2">
-              <h2 className="text-[16px] font-bold text-ink">Sedang di Vendor</h2>
+              <h2 className="font-display text-[16px] font-bold text-ink">Sedang di Vendor</h2>
               <span className="pill bg-gold-50 text-gold-800 ring-gold-200">{diVendor.length} nota</span>
             </div>
             {diVendor.length === 0 ? (

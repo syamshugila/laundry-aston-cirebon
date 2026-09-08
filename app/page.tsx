@@ -2,7 +2,7 @@
 import Link from "next/link";
 import { useMemo } from "react";
 import { useAuth } from "@/lib/auth-context";
-import { useOrders, useIssues } from "@/lib/hooks";
+import { useOrders, useIssues, useRequests } from "@/lib/hooks";
 import { StatCard, Spinner, Notice, StatusPill, SlaBadge, SkeletonList } from "@/components/ui";
 import Icon, { type IconName } from "@/components/Icon";
 
@@ -13,6 +13,7 @@ export default function Dashboard() {
   const { profile } = useAuth();
   const { orders, loading, error } = useOrders(undefined, 300);
   const { issues } = useIssues();
+  const { requests } = useRequests();
 
   const s = useMemo(() => {
     const hariIni = todayKey();
@@ -44,6 +45,7 @@ export default function Dashboard() {
   }, [orders]);
 
   const kendalaTerbuka = issues.filter((i) => i.status !== "resolved");
+  const permintaanTerbuka = requests.filter((r) => r.status === "open");
 
   // Penjaga check-out: tamu berangkat hari ini tapi cucian belum sampai kamar.
   const mendesak = useMemo(() => {
@@ -124,12 +126,20 @@ export default function Dashboard() {
 
       {/* ================= Kartu angka ================= */}
       <div className="stagger mb-4 grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-6">
-        <StatCard label="Nota Hari Ini" value={s.hariIni} hint="Dibuat hari ini" icon="list" />
+        <StatCard
+          label="Permintaan Masuk"
+          value={permintaanTerbuka.length}
+          hint="Dari Front Office"
+          tone={permintaanTerbuka.length ? "warn" : "plain"}
+          href="/requests"
+          icon="clock"
+        />
         <StatCard label="Sudah Diambil" value={s.pickedUp} hint="Menunggu sortir" tone="brand" href="/orders" icon="box" />
         <StatCard label="Proses In-House" value={s.proses} hint="Cuci & setrika" tone="warn" href="/process" icon="clock" />
         <StatCard label="Di Vendor" value={s.vendor} hint="Di luar hotel" tone="warn" href="/vendor" icon="truck" />
         <StatCard label="Kembali & QC" value={s.returned} hint="Perlu diperiksa" href="/vendor-return" icon="box" />
         <StatCard label="Siap Antar" value={s.ready} hint="Sudah dibungkus" tone="brand" href="/ready" icon="check" />
+        <StatCard label="Nota Hari Ini" value={s.hariIni} hint="Dibuat hari ini" icon="list" />
       </div>
 
       <div className="stagger mb-6 grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-6">
@@ -148,8 +158,14 @@ export default function Dashboard() {
 
       {/* ================= Pintasan peran ================= */}
       <div className="stagger mb-6 grid gap-3 md:grid-cols-3">
+        <QuickCard
+          href="/requests"
+          tone="gold"
+          eyebrow="Meja Front Office"
+          title={`${permintaanTerbuka.length} permintaan menunggu dijemput`}
+          icon="clock"
+        />
         <QuickCard href="/verification" tone="emerald" eyebrow="Meja HK Leader" title={`Audit ${s.audit} nota menunggu`} icon="shield" />
-        <QuickCard href="/vendor" tone="gold" eyebrow="Logistik Vendor" title="Serah terima & surat jalan" icon="truck" />
         <QuickCard href="/issues" tone="rose" eyebrow="Kendali Mutu" title={`Tangani ${kendalaTerbuka.length} kendala`} icon="alert" />
       </div>
 

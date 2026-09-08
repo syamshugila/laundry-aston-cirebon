@@ -89,6 +89,7 @@ function TabHarga() {
     category: "Atasan",
     prices: { wash_press: 0 },
     defaultRoute: "in_house",
+    isPackage: false,
     active: true,
   };
 
@@ -132,7 +133,7 @@ function TabHarga() {
         />
       ) : (
         <div className="card scroll-x">
-          <table className="w-full min-w-[720px] border-collapse">
+          <table className="w-full min-w-[820px] border-collapse">
             <thead className="border-b border-line bg-slate-50/70">
               <tr>
                 <th className="th">Item</th>
@@ -140,6 +141,7 @@ function TabHarga() {
                 <th className="th num text-right">Cuci+Setrika</th>
                 <th className="th num text-right">Setrika Saja</th>
                 <th className="th num text-right">Dry Clean</th>
+                <th className="th num text-right">Paket</th>
                 <th className="th">Rute</th>
                 <th className="th"></th>
               </tr>
@@ -149,12 +151,20 @@ function TabHarga() {
                 <tr key={r.id} className="border-b border-line last:border-0">
                   <td className="td font-semibold text-ink">
                     {r.itemName}
+                    {r.isPackage && <span className="ml-2 pill bg-gold-100 text-gold-800 ring-gold-300">Paket</span>}
                     <div className="font-mono text-[11px] text-ink-3">{r.id}</div>
                   </td>
                   <td className="td">{r.category}</td>
                   <td className="td num text-right">{r.prices.wash_press ? rupiah(r.prices.wash_press) : "—"}</td>
                   <td className="td num text-right">{r.prices.press_only ? rupiah(r.prices.press_only) : "—"}</td>
                   <td className="td num text-right">{r.prices.dry_clean ? rupiah(r.prices.dry_clean) : "—"}</td>
+                  <td className="td num text-right">
+                    {r.prices.package ? (
+                      <span className="font-semibold text-gold-700">{rupiah(r.prices.package)}</span>
+                    ) : (
+                      "—"
+                    )}
+                  </td>
                   <td className="td">{r.defaultRoute === "vendor" ? "Vendor" : "In-house"}</td>
                   <td className="td text-right">
                     <button onClick={() => setEdit(r)} className="mr-2 text-[13px] font-semibold text-brand-700 hover:underline">
@@ -224,7 +234,20 @@ function FormHarga({ item, onClose, onSaved }: { item: PriceItem; onClose: () =>
             <option value="0">Nonaktif</option>
           </select>
         </Field>
-        {(["wash_press", "press_only", "dry_clean"] as Treatment[]).map((t) => (
+        <Field label="Jenis Baris" hint="Paket = harga tetap, bukan harga satuan">
+          <select
+            className="input"
+            value={f.isPackage ? "1" : "0"}
+            onChange={(e) => {
+              const paket = e.target.value === "1";
+              setF({ ...f, isPackage: paket, category: paket ? "Paket" : f.category });
+            }}
+          >
+            <option value="0">Item satuan</option>
+            <option value="1">Paket harga tetap</option>
+          </select>
+        </Field>
+        {(["wash_press", "press_only", "dry_clean", "package"] as Treatment[]).map((t) => (
           <Field key={t} label={TREATMENT_LABEL[t]} hint="Kosongkan (0) bila tidak dilayani">
             <input
               type="number"

@@ -4,7 +4,7 @@ import { useOrders, useIssues } from "@/lib/hooks";
 import { PageHeader, Spinner, StatCard, Notice } from "@/components/ui";
 import Icon from "@/components/Icon";
 import { rupiah, todayKey, tanggal } from "@/lib/format";
-import { STATUS_LABEL, STATUS_ORDER, SERVICE_LABEL } from "@/lib/status";
+import { STATUS_LABEL, STATUS_ORDER, SERVICE_LABEL , PAYMENT_LABEL } from "@/lib/status";
 
 export default function ReportsPage() {
   const { orders, loading } = useOrders(undefined, 300);
@@ -69,9 +69,12 @@ export default function ReportsPage() {
 
   function ekspor() {
     const b = [
-      ["Kode", "Tanggal", "Kamar", "Tamu", "Layanan", "Rute", "Vendor", "Item", "Total", "Status", "Charge", "Selisih"],
+      ["Kode", "No Bill", "Cara Bayar", "Remark Bayar", "Tanggal", "Kamar", "Tamu", "Layanan", "Rute", "Vendor", "Item", "Total", "Status", "Charge", "Selisih"],
       ...rows.map((o) => [
         o.trackingCode,
+        o.billNumber || "",
+        PAYMENT_LABEL[o.paymentType || "unset"],
+        o.paymentRemark || "",
         new Date(o.createdAt).toLocaleString("id-ID"),
         o.roomNumber,
         o.guestName,

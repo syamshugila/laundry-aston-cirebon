@@ -4,7 +4,7 @@ import { useOrders } from "@/lib/hooks";
 import { PageHeader, EmptyState, Notice, SkeletonList } from "@/components/ui";
 import OrderTable from "@/components/OrderTable";
 import Icon from "@/components/Icon";
-import { STATUS_LABEL, STATUS_ORDER, SERVICE_LABEL } from "@/lib/status";
+import { STATUS_LABEL, STATUS_ORDER, SERVICE_LABEL , PAYMENT_LABEL } from "@/lib/status";
 import { rupiah, todayKey } from "@/lib/format";
 import type { OrderStatus } from "@/lib/types";
 
@@ -35,9 +35,12 @@ export default function OrdersPage() {
 
   function ekspor() {
     const baris = [
-      ["Kode Lacak", "Tanggal", "Kamar", "Tamu", "Layanan", "Rute", "Vendor", "Item Hotel", "Item Tamu", "Total", "Status", "Charge"],
+      ["Kode Lacak", "No Bill", "Cara Bayar", "Remark Bayar", "Tanggal", "Kamar", "Tamu", "Layanan", "Rute", "Vendor", "Item Hotel", "Item Tamu", "Total", "Status", "Charge"],
       ...hasil.map((o) => [
         o.trackingCode,
+        o.billNumber || "",
+        PAYMENT_LABEL[o.paymentType || "unset"],
+        o.paymentRemark || "",
         new Date(o.createdAt).toLocaleString("id-ID"),
         o.roomNumber,
         o.guestName,

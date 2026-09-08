@@ -8,8 +8,9 @@ import { useIssues } from "@/lib/hooks";
 import { Spinner, Notice, StatusPill, SlaBadge, Field, EmptyState } from "@/components/ui";
 import Icon from "@/components/Icon";
 import AdvanceAction from "@/components/AdvanceAction";
+import PaymentPanel from "@/components/PaymentPanel";
 import { rupiah, tanggalJam, lantaiDari, durasiJam } from "@/lib/format";
-import { SERVICE_LABEL, TREATMENT_LABEL, STATUS_LABEL, canVerify } from "@/lib/status";
+import { SERVICE_LABEL, TREATMENT_LABEL, STATUS_LABEL, PAYMENT_LABEL, PAYMENT_CLASS, canVerify } from "@/lib/status";
 import type { LaundryOrder, IssueType } from "@/lib/types";
 
 const JENIS_KENDALA: { v: IssueType; t: string }[] = [
@@ -80,7 +81,13 @@ export default function OrderDetail() {
               {order.guestPhone ? ` · ${order.guestPhone}` : ""}
             </p>
           </div>
-          <div className="flex flex-wrap items-center gap-2">
+          <div className="flex flex-wrap items-center justify-end gap-2">
+            {order.billNumber && (
+              <span className="pill bg-slate-100 font-mono text-slate-700 ring-slate-200">Bill {order.billNumber}</span>
+            )}
+            {order.paymentType && order.paymentType !== "unset" && (
+              <span className={`pill ${PAYMENT_CLASS[order.paymentType]}`}>{PAYMENT_LABEL[order.paymentType]}</span>
+            )}
             <StatusPill status={order.status} showStep />
             <SlaBadge promisedAt={order.promisedAt} done={["delivered", "pending_audit", "verified"].includes(order.status)} />
             {order.isLocked && <span className="pill bg-slate-100 text-slate-600 ring-slate-200">Terkunci</span>}
@@ -143,6 +150,9 @@ export default function OrderDetail() {
                     <tr key={i} className="border-b border-line last:border-0">
                       <td className="td">
                         <span className="font-semibold text-ink">{it.itemName}</span>
+                        {it.isPackage && (
+                          <span className="ml-2 pill bg-gold-100 text-gold-800 ring-gold-300">Paket</span>
+                        )}
                         {it.note && <div className="text-[12.5px] text-gold-700">{it.note}</div>}
                       </td>
                       <td className="td">{TREATMENT_LABEL[it.treatment]}</td>
@@ -264,6 +274,8 @@ export default function OrderDetail() {
         {/* ---- Kolom aksi ---- */}
         <aside className="space-y-4 lg:sticky lg:top-20 lg:h-fit">
           <AdvanceAction order={order} />
+
+          <PaymentPanel order={order} />
 
           <div className="card px-5 py-5">
             <h2 className="mb-3 text-[15px] font-bold text-ink">Kendala</h2>
